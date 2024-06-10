@@ -3,7 +3,7 @@
 
 <head>
   <meta charset='utf-8' />
-  <title></title>
+  <title>Olives & Sheep</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
@@ -21,6 +21,7 @@
       top: 0;
       bottom: 0;
       width: 100%;
+      background-color: yellow; /* Add this line */
     }
 
     /* Popup styling */
@@ -79,6 +80,7 @@
 
   <div id='map'></div>
   <script>
+    alert('JavaScript is running'); // Add this line
 
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
@@ -92,15 +94,16 @@
     };
     //YOUR TURN: add your Mapbox token
     
-    mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4MXZpdHp6MGdmNjJxcHRlZDBucnN6OSJ9.ohI_6bbVwZVFwUQZnx1Riw'; //Mapbox token 
+    mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4OWZ4Mmt2MTV3YjJycHZkMmlzcWI2NSJ9.oMo7f3apUlEXGgcnTWkTPg'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
-      style: 'mapbox://styles/mapbox/standard', // mapbox://styles/mapbox/satellite-streets-v12 for satellite street // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+      style: 'mapbox://styles/mapbox/satellite-streets-v12', // mapbox://styles/mapbox/satellite-streets-v12 for satellite street // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
       center: [-122.411, 37.785], // starting position [lng, lat]
       zoom: 10,// starting zoom
       transformRequest: transformRequest
     });
-
+    console.log(map); // Log the map object to check initialization
+    
     $(document).ready(function () {
       $.ajax({
         type: "GET",
