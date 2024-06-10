@@ -21,7 +21,6 @@
       top: 0;
       bottom: 0;
       width: 100%;
-      background-color: yellow; /* Add this line */
     }
 
     /* Popup styling */
@@ -80,7 +79,6 @@
 
   <div id='map'></div>
   <script>
-    alert('JavaScript is running'); // Add this line
 
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
@@ -102,8 +100,7 @@
       zoom: 10,// starting zoom
       transformRequest: transformRequest
     });
-    console.log(map); // Log the map object to check initialization
-    
+
     $(document).ready(function () {
       $.ajax({
         type: "GET",
