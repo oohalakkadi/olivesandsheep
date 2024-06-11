@@ -226,38 +226,56 @@
     
 
     map.on('idle', () => {
-        // Enumerate ids of the layers to toggle.
-        const toggleableLayerIds = ['satellite', 'water(1)', 'country-boundaries copy', 'country-boundaries(1) copy'];
 
-        // Set up the toggle button.
-        const link = document.createElement('a');
-        link.id = 'toggle-layers';
-        link.href = '#';
-        link.textContent = 'satellite';
-        link.className = 'active';
+        // Enumerate ids of the layers.
+        const toggleableLayerIds = ['satellite'];
 
-        // Show or hide layers when the toggle is clicked.
-        link.onclick = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // Set up the corresponding toggle button for each layer.
+        for (const id of toggleableLayerIds) {
+            // Skip layers that already have a button set up.
+            if (document.getElementById(id)) {
+                continue;
+            }
 
-            // Toggle visibility for each layer in the array.
-            toggleableLayerIds.forEach(layerId => {
-                const visibility = map.getLayoutProperty(layerId, 'visibility');
+            // Create a link.
+            const link = document.createElement('a');
+            link.id = id;
+            link.href = '#';
+            link.textContent = id;
+            link.className = 'active';
+
+            // Show or hide layer when the toggle is clicked.
+            link.onclick = function (e) {
+                const clickedLayer = this.textContent;
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (clickedLayer) = 'satellite'(
+                  clickedLayer also includes 'water(1)', 'country-boundaries copy', 'country-boundaries(1) copy'
+                )
+                
+                const visibility = map.getLayoutProperty(
+                    clickedLayer,
+                    'visibility'
+                );
 
                 // Toggle layer visibility by changing the layout object's visibility property.
                 if (visibility === 'visible') {
-                    map.setLayoutProperty(layerId, 'visibility', 'none');
+                    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
                     this.className = '';
                 } else {
-                    map.setLayoutProperty(layerId, 'visibility', 'visible');
                     this.className = 'active';
+                    map.setLayoutProperty(
+                        clickedLayer,
+                        'visibility',
+                        'visible'
+                    );
                 }
-            });
-        };
+            };
 
-        const menu = document.getElementById('menu');
-        menu.appendChild(link);
+            const layers = document.getElementById('menu');
+            layers.appendChild(link);
+        }
     });
 
   </script>
