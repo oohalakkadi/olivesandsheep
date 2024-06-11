@@ -165,10 +165,11 @@
         }, function (err, data) {
           map.on('load', function () {
 
-            //Add the the layer to the map
+            //Reports Layer
             map.addLayer({
               'id': 'csvData',
               'type': 'symbol',
+              'filter': ['==', 'Format', 'Report'],
               'source': {
                 'type': 'geojson',
                 'data': data
