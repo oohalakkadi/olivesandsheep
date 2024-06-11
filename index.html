@@ -79,45 +79,45 @@
 
   <style>
     #menu {
-        background: #fff;
-        position: absolute;
-        z-index: 1;
-        top: 10px;
-        right: 10px;
-        border-radius: 3px;
-        width: 120px;
-        border: 1px solid rgba(0, 0, 0, 0.4);
-        font-family: 'Helvetica Neue', sans-serif;
+      background: #fff;
+      position: absolute;
+      z-index: 1;
+      top: 10px;
+      right: 10px;
+      border-radius: 3px;
+      width: 120px;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      font-family: 'Helvetica Neue', sans-serif;
     }
 
     #menu a {
-        font-size: 13px;
-        color: #404040;
-        display: grid;
-        margin: 0;
-        padding: 0;
-        padding: 10px;
-        text-decoration: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-        text-align: center;
+      font-size: 13px;
+      color: #404040;
+      display: grid;
+      margin: 0;
+      padding: 0;
+      padding: 10px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+      text-align: center;
     }
 
     #menu a:last-child {
-        border: none;
+      border: none;
     }
 
     #menu a:hover {
-        background-color: #f8f8f8;
-        color: #404040;
+      background-color: #f8f8f8;
+      color: #404040;
     }
 
     #menu a.active {
-        background-color: #ffe7c1;
-        color: #000000;
+      background-color: #ffe7c1;
+      color: #000000;
     }
 
     #menu a.active:hover {
-        background: #ffd89a;
+      background: #ffd89a;
     }
   </style>
 
@@ -136,7 +136,7 @@
       };
     };
     //YOUR TURN: add your Mapbox token
-    
+
     mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4OWZ4Mmt2MTV3YjJycHZkMmlzcWI2NSJ9.oMo7f3apUlEXGgcnTWkTPg'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
@@ -167,9 +167,63 @@
 
             //Reports Layer
             map.addLayer({
-              'id': 'csvData',
+              'id': 'reportLayer',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Report'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'library',
+                'icon-size': 2
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Photo Layer
+            map.addLayer({
+              'id': 'photoLayer',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Photo'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'attraction',
+                'icon-size': 2
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Video Layer
+            map.addLayer({
+              'id': 'videoLayer',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Video'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'cinema',
+                'icon-size': 2
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Journalism Layer
+            map.addLayer({
+              'id': 'journalismLayer',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Journalism'],
               'source': {
                 'type': 'geojson',
                 'data': data
@@ -183,121 +237,141 @@
               }
             });
 
-
-            // When a click event occurs on a feature in the csvData layer, open a popup at the
-            // location of the feature, with description HTML from its properties.
-            map.on('click', 'csvData', function (e) {
-              var coordinates = e.features[0].geometry.coordinates.slice();
-
-              //set popup text
-              //You can adjust the values of the popup to match the headers of your CSV.
-              // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `
-                <h3>${e.features[0].properties.Name}</h3>
-                <h4><em>${e.features[0].properties.Address}</em></h4>
-                <h4>${e.features[0].properties.About}</h4>
-                <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Link_Name}</a></h4>
-              `;
-
-              // Ensure that if the map is zoomed out such that multiple
-              // copies of the feature are visible, the popup appears
-              // over the copy being pointed to.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            //Social Media Layer
+            map.addLayer({
+              'id': 'socialMediaLayer',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Social Media'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'mobile-phone',
+                'icon-size': 2
+              },
+              'paint': {
+                'icon-color': "white"
               }
-
-              //add Popup to map
-
-              new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(description)
-                .addTo(map);
             });
 
-            // Change the cursor to a pointer when the mouse is over the places layer.
-            map.on('mouseenter', 'csvData', function () {
-              map.getCanvas().style.cursor = 'pointer';
-            });
+            function addLayerFunctionality(layerId) {
+              // When a click event occurs on a feature in the csvData layer, open a popup at the
+              // location of the feature, with description HTML from its properties.
+              map.on('click', layerId, function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
 
-            // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'places', function () {
-              map.getCanvas().style.cursor = '';
-            });
+                //set popup text
+                //You can adjust the values of the popup to match the headers of your CSV.
+                // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+                var description = `
+                  <h3>${e.features[0].properties.Name}</h3>
+                  <h4><em>${e.features[0].properties.Address}</em></h4>
+                  <h4>${e.features[0].properties.About}</h4>
+                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Link_Name}</a></h4>
+                `;
 
-            var bbox = turf.bbox(data);
-            map.fitBounds(bbox, { padding: 50 });
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
 
+                //add Popup to map
+
+                new mapboxgl.Popup()
+                  .setLngLat(coordinates)
+                  .setHTML(description)
+                  .addTo(map);
+              });
+
+              // Change the cursor to a pointer when the mouse is over the places layer.
+              map.on('mouseenter', layerId, function () {
+                map.getCanvas().style.cursor = 'pointer';
+              });
+
+              // Change it back to a pointer when it leaves.
+              map.on('mouseleave', 'places', function () {
+                map.getCanvas().style.cursor = '';
+              });
+
+              var bbox = turf.bbox(data);
+              map.fitBounds(bbox, { padding: 50 });
+            }
+
+          ['reportLayer', 'photoLayer', 'journalismLayer', 'socialMediaLayer', 'videoLayer'].forEach(layerId => {
+            addLayerFunctionality(layerId);
           });
-
         });
       };
     });
-    
+
 
     map.on('idle', () => {
 
-        // Enumerate ids of the layers.
-        const toggleableLayerIds = ['satellite'];
+      // Enumerate ids of the layers.
+      const toggleableLayerIds = ['satellite'];
 
-        // Set up the corresponding toggle button for each layer.
-        for (const id of toggleableLayerIds) {
-            // Skip layers that already have a button set up.
-            if (document.getElementById(id)) {
-                continue;
-            }
-
-            // Create a link.
-            const link = document.createElement('a');
-            link.id = id;
-            link.href = '#';
-            link.textContent = id;
-            link.className = 'active';
-
-            // Show or hide layer when the toggle is clicked.
-            link.onclick = function (e) {
-                const clickedLayer = this.textContent;
-                e.preventDefault();
-                e.stopPropagation();
-
-                const visibility = map.getLayoutProperty(
-                    clickedLayer,
-                    'visibility'
-                );
-
-                if (clickedLayer == 'satellite') {
-                  if (visibility === 'visible') {
-                    map.setLayoutProperty('satellite', 'visibility', 'none');
-                    map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
-                    map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
-                    map.setLayoutProperty('water (1)', 'visibility', 'none');
-                    this.className = '';
-                  } else {
-                      this.className = 'active';
-                      map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
-                      map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
-                      map.setLayoutProperty('water (1)', 'visibility', 'visible');
-                      map.setLayoutProperty('satellite', 'visibility', 'visible');
-                  }
-                }
-                else {
-                  if (visibility === 'visible') {
-                      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-                      this.className = '';
-                  } else {
-                      this.className = 'active';
-                      map.setLayoutProperty(
-                          clickedLayer,
-                          'visibility',
-                          'visible'
-                      );
-                  }
-                }
-                
-            };
-
-            const layers = document.getElementById('menu');
-            layers.appendChild(link);
+      // Set up the corresponding toggle button for each layer.
+      for (const id of toggleableLayerIds) {
+        // Skip layers that already have a button set up.
+        if (document.getElementById(id)) {
+          continue;
         }
+
+        // Create a link.
+        const link = document.createElement('a');
+        link.id = id;
+        link.href = '#';
+        link.textContent = id;
+        link.className = 'active';
+
+        // Show or hide layer when the toggle is clicked.
+        link.onclick = function (e) {
+          const clickedLayer = this.textContent;
+          e.preventDefault();
+          e.stopPropagation();
+
+          const visibility = map.getLayoutProperty(
+            clickedLayer,
+            'visibility'
+          );
+
+          if (clickedLayer == 'satellite') {
+            if (visibility === 'visible') {
+              map.setLayoutProperty('satellite', 'visibility', 'none');
+              map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
+              map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
+              map.setLayoutProperty('water (1)', 'visibility', 'none');
+              this.className = '';
+            } else {
+              this.className = 'active';
+              map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
+              map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
+              map.setLayoutProperty('water (1)', 'visibility', 'visible');
+              map.setLayoutProperty('satellite', 'visibility', 'visible');
+            }
+          }
+          else {
+            if (visibility === 'visible') {
+              map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+              this.className = '';
+            } else {
+              this.className = 'active';
+              map.setLayoutProperty(
+                clickedLayer,
+                'visibility',
+                'visible'
+              );
+            }
+          }
+
+        };
+
+        const layers = document.getElementById('menu');
+        layers.appendChild(link);
+      }
     });
 
   </script>
