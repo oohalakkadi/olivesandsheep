@@ -168,15 +168,14 @@
             //Add the the layer to the map
             map.addLayer({
               'id': 'csvData',
-              'type': 'symbol',
+              'type': 'circle',
               'source': {
                 'type': 'geojson',
                 'data': data
               },
               'paint': {
-                'icon-image': url(marker.png),
-                'icon-size': 1/2,
-                'icon-color': "white"
+                'circle-radius': 6,
+                'circle-color': "white"
               }
             });
 
