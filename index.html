@@ -228,10 +228,10 @@
     map.on('idle', () => {
 
         // Enumerate ids of the layers.
-        const buttons = ['Satellite'];
+        const toggleableLayerIds = ['satellite'];
 
         // Set up the corresponding toggle button for each layer.
-        for (const id of buttons) {
+        for (const id of toggleableLayerIds) {
             // Skip layers that already have a button set up.
             if (document.getElementById(id)) {
                 continue;
@@ -246,36 +246,38 @@
 
             // Show or hide layer when the toggle is clicked.
             link.onclick = function (e) {
-                const button = this.textContent;
+                const clickedLayer = this.textContent;
                 e.preventDefault();
                 e.stopPropagation();
 
                 const visibility = map.getLayoutProperty(
-                    button,
+                    clickedLayer,
                     'visibility'
                 );
 
-                if (button == 'satellite') {
+                if (clickedLayer == 'satellite') {
                   if (visibility === 'visible') {
-                    map.setLayoutProperty('country-boundaries (1)', 'visibility', 'none');
-                    map.setLayoutProperty('country-boundaries', 'visibility', 'none');
-                    map.setLayoutProperty('water', 'visibility', 'none');
+                    map.setLayoutProperty('satellite', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
+                    map.setLayoutProperty('water (1)', 'visibility', 'none');
                     this.className = '';
                   } else {
                       this.className = 'active';
-                      map.setLayoutProperty('country-boundaries (1)', 'visibility', 'visible');
-                      map.setLayoutProperty('country-boundaries', 'visibility', 'visible');
-                      map.setLayoutProperty('water', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
+                      map.setLayoutProperty('water (1)', 'visibility', 'visible');
+                      map.setLayoutProperty('satellite', 'visibility', 'visible');
                   }
                 }
                 else {
                   if (visibility === 'visible') {
-                      map.setLayoutProperty(button, 'visibility', 'none');
+                      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
                       this.className = '';
                   } else {
                       this.className = 'active';
                       map.setLayoutProperty(
-                          button,
+                          clickedLayer,
                           'visibility',
                           'visible'
                       );
