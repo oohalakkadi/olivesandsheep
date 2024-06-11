@@ -257,17 +257,15 @@
 
                 if (clickedLayer == 'satellite') {
                   if (visibility === 'visible') {
-                    map.setLayoutProperty('satellite', 'visibility', 'none');
-                    map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
-                    map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
-                    map.setLayoutProperty('water (1)', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries (1)', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries', 'visibility', 'none');
+                    map.setLayoutProperty('water', 'visibility', 'none');
                     this.className = '';
                   } else {
                       this.className = 'active';
-                      map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
-                      map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
-                      map.setLayoutProperty('water (1)', 'visibility', 'visible');
-                      map.setLayoutProperty('satellite', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries (1)', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries', 'visibility', 'visible');
+                      map.setLayoutProperty('water', 'visibility', 'visible');
                   }
                 }
                 else {
