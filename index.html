@@ -228,10 +228,10 @@
     map.on('idle', () => {
 
         // Enumerate ids of the layers.
-        const toggleableLayerIds = ['satellite'];
+        const buttons = ['Satellite'];
 
         // Set up the corresponding toggle button for each layer.
-        for (const id of toggleableLayerIds) {
+        for (const id of buttons) {
             // Skip layers that already have a button set up.
             if (document.getElementById(id)) {
                 continue;
@@ -246,16 +246,16 @@
 
             // Show or hide layer when the toggle is clicked.
             link.onclick = function (e) {
-                const clickedLayer = this.textContent;
+                const button = this.textContent;
                 e.preventDefault();
                 e.stopPropagation();
 
                 const visibility = map.getLayoutProperty(
-                    clickedLayer,
+                    button,
                     'visibility'
                 );
 
-                if (clickedLayer == 'satellite') {
+                if (button == 'satellite') {
                   if (visibility === 'visible') {
                     map.setLayoutProperty('country-boundaries (1)', 'visibility', 'none');
                     map.setLayoutProperty('country-boundaries', 'visibility', 'none');
@@ -270,12 +270,12 @@
                 }
                 else {
                   if (visibility === 'visible') {
-                      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                      map.setLayoutProperty(button, 'visibility', 'none');
                       this.className = '';
                   } else {
                       this.className = 'active';
                       map.setLayoutProperty(
-                          clickedLayer,
+                          button,
                           'visibility',
                           'visible'
                       );
