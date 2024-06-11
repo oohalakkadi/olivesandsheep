@@ -24,7 +24,6 @@
     }
 
     /* Popup styling */
-
     .mapboxgl-popup {
       padding-bottom: 5px;
     }
@@ -124,7 +123,6 @@
   <nav id="menu"></nav>
   <div id='map'></div>
   <script>
-
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
         url.slice(8, 22) === "api.mapbox.com" ||
@@ -135,8 +133,8 @@
           : url
       };
     };
-    //YOUR TURN: add your Mapbox token
 
+    //YOUR TURN: add your Mapbox token
     mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4OWZ4Mmt2MTV3YjJycHZkMmlzcWI2NSJ9.oMo7f3apUlEXGgcnTWkTPg'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
@@ -146,7 +144,6 @@
       transformRequest: transformRequest
     });
 
-
     $(document).ready(function () {
       $.ajax({
         type: "GET",
@@ -155,7 +152,6 @@
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
       });
-
 
       function makeGeoJSON(csvData) {
         csv2geojson.csv2geojson(csvData, {
@@ -279,7 +275,6 @@
                 }
 
                 //add Popup to map
-
                 new mapboxgl.Popup()
                   .setLngLat(coordinates)
                   .setHTML(description)
@@ -292,7 +287,7 @@
               });
 
               // Change it back to a pointer when it leaves.
-              map.on('mouseleave', 'places', function () {
+              map.on('mouseleave', layerId, function () {
                 map.getCanvas().style.cursor = '';
               });
 
@@ -300,16 +295,16 @@
               map.fitBounds(bbox, { padding: 50 });
             }
 
-          ['reportLayer', 'photoLayer', 'journalismLayer', 'socialMediaLayer', 'videoLayer'].forEach(layerId => {
-            addLayerFunctionality(layerId);
+            ['reportLayer', 'photoLayer', 'journalismLayer', 'socialMediaLayer', 'videoLayer'].forEach(layerId => {
+              addLayerFunctionality(layerId);
+            });
+
           });
         });
-      };
+      }
     });
 
-
     map.on('idle', () => {
-
       // Enumerate ids of the layers.
       const toggleableLayerIds = ['satellite'];
 
@@ -352,8 +347,7 @@
               map.setLayoutProperty('water (1)', 'visibility', 'visible');
               map.setLayoutProperty('satellite', 'visibility', 'visible');
             }
-          }
-          else {
+          } else {
             if (visibility === 'visible') {
               map.setLayoutProperty(clickedLayer, 'visibility', 'none');
               this.className = '';
@@ -366,16 +360,13 @@
               );
             }
           }
-
         };
 
         const layers = document.getElementById('menu');
         layers.appendChild(link);
       }
     });
-
   </script>
-
 </body>
 
 </html>
