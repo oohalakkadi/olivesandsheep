@@ -228,7 +228,7 @@
     map.on('idle', () => {
 
         // Enumerate ids of the layers.
-        const toggleableLayerIds = ['mapbox-satellite'];
+        const toggleableLayerIds = ['satellite'];
 
         // Set up the corresponding toggle button for each layer.
         for (const id of toggleableLayerIds) {
@@ -255,18 +255,35 @@
                     'visibility'
                 );
 
-                // Toggle layer visibility by changing the layout object's visibility property.
-                if (visibility === 'visible') {
-                    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                if (clickedLayer == 'satellite') {
+                  if (visibility === 'visible') {
+                    map.setLayoutProperty('satellite', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
+                    map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
+                    map.setLayoutProperty('water (1)', 'visibility', 'none');
                     this.className = '';
-                } else {
-                    this.className = 'active';
-                    map.setLayoutProperty(
-                        clickedLayer,
-                        'visibility',
-                        'visible'
-                    );
+                  } else {
+                      this.className = 'active';
+                      map.setLayoutProperty('satellite', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
+                      map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
+                      map.setLayoutProperty('water (1)', 'visibility', 'visible');
+                  }
                 }
+                else {
+                  if (visibility === 'visible') {
+                      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                      this.className = '';
+                  } else {
+                      this.className = 'active';
+                      map.setLayoutProperty(
+                          clickedLayer,
+                          'visibility',
+                          'visible'
+                      );
+                  }
+                }
+                
             };
 
             const layers = document.getElementById('menu');
