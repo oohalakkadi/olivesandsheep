@@ -228,7 +228,7 @@
     map.on('idle', () => {
 
         // Enumerate ids of the layers.
-        const toggleableLayerIds = ['satellite'];
+        const toggleableLayerIds = ['mapbox-satellite'];
 
         // Set up the corresponding toggle button for each layer.
         for (const id of toggleableLayerIds) {
@@ -249,7 +249,7 @@
                 const clickedLayer = this.textContent;
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const visibility = map.getLayoutProperty(
                     clickedLayer,
                     'visibility'
