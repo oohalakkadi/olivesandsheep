@@ -282,9 +282,10 @@
                 // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
                 var description = `
                   <h3>${e.features[0].properties.Name}</h3>
-                  <h4><em>${e.features[0].properties.Address}</em></h4>
+                  <h4><em>${e.features[0].properties.Date}</em></h4>
+                  <h4><b>${e.features[0].properties.Address}</b></h4>
                   <h4>${e.features[0].properties.About}</h4>
-                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Link_Name}</a></h4>
+                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.LinkTitle}</a></h4>
                 `;
 
                 // Ensure that if the map is zoomed out such that multiple
