@@ -163,7 +163,7 @@
 
             //Reports Layer
             map.addLayer({
-              'id': 'reportLayer',
+              'id': 'reports',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Report'],
               'source': {
@@ -176,12 +176,13 @@
               },
               'paint': {
                 'icon-color': "white"
-              }
+              },
+              'minzoom': 0
             });
 
             //Photo Layer
             map.addLayer({
-              'id': 'photoLayer',
+              'id': 'photos',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Photo'],
               'source': {
@@ -194,12 +195,13 @@
               },
               'paint': {
                 'icon-color': "white"
-              }
+              },
+              'minzoom': 0
             });
 
             //Video Layer
             map.addLayer({
-              'id': 'videoLayer',
+              'id': 'videos',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Video'],
               'source': {
@@ -212,12 +214,13 @@
               },
               'paint': {
                 'icon-color': "white"
-              }
+              },
+              'minzoom': 0
             });
 
             //Journalism Layer
             map.addLayer({
-              'id': 'journalismLayer',
+              'id': 'journalism',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Journalism'],
               'source': {
@@ -230,12 +233,13 @@
               },
               'paint': {
                 'icon-color': "white"
-              }
+              },
+              'minzoom': 0
             });
 
             //Social Media Layer
             map.addLayer({
-              'id': 'socialMediaLayer',
+              'id': 'social media',
               'type': 'symbol',
               'filter': ['==', 'Format', 'Social Media'],
               'source': {
@@ -248,7 +252,8 @@
               },
               'paint': {
                 'icon-color': "white"
-              }
+              },
+              'minzoom': 0
             });
 
             function addLayerFunctionality(layerId) {
@@ -295,7 +300,7 @@
               map.fitBounds(bbox, { padding: 50 });
             }
 
-            ['reportLayer', 'photoLayer', 'journalismLayer', 'socialMediaLayer', 'videoLayer'].forEach(layerId => {
+            ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
             });
 
@@ -306,7 +311,7 @@
 
     map.on('idle', () => {
       // Enumerate ids of the layers.
-      const toggleableLayerIds = ['satellite', 'reportLayer', 'photoLayer', 'journalismLayer', 'socialMediaLayer', 'videoLayer'];
+      const toggleableLayerIds = ['satellite', 'reports', 'photos', 'journalism', 'social media', 'videos'];
 
       // Set up the corresponding toggle button for each layer.
       for (const id of toggleableLayerIds) {
