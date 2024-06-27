@@ -23,6 +23,7 @@
       width: 100%;
     }
 
+    /* Popup styling */
     .mapboxgl-popup {
       padding-bottom: 5px;
     }
@@ -70,48 +71,12 @@
     .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
       border-bottom-color: rgb(61, 59, 59);
     }
+  </style>
+</head>
 
-    #styleMenu {
-      background: #fff;
-      position: absolute;
-      z-index: 1;
-      top: 10px;
-      left: 10px;
-      border-radius: 3px;
-      width: 150px;
-      border: 1px solid rgba(0, 0, 0, 0.4);
-      font-family: 'Helvetica Neue', sans-serif;
-    }
+<body>
 
-    #styleMenu a {
-      font-size: 13px;
-      color: #404040;
-      display: block;
-      margin: 0;
-      padding: 10px;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-      text-align: center;
-    }
-
-    #styleMenu a:last-child {
-      border: none;
-    }
-
-    #styleMenu a:hover {
-      background-color: #f8f8f8;
-      color: #404040;
-    }
-
-    #styleMenu a.active {
-      background-color: #ffe7c1;
-      color: #000000;
-    }
-
-    #styleMenu a.active:hover {
-      background: #ffd89a;
-    }
-
+  <style>
     #menu {
       background: #fff;
       position: absolute;
@@ -119,7 +84,7 @@
       top: 10px;
       right: 10px;
       border-radius: 3px;
-      width: 150px;
+      width: 120px;
       border: 1px solid rgba(0, 0, 0, 0.4);
       font-family: 'Helvetica Neue', sans-serif;
     }
@@ -127,8 +92,9 @@
     #menu a {
       font-size: 13px;
       color: #404040;
-      display: block;
+      display: grid;
       margin: 0;
+      padding: 0;
       padding: 10px;
       text-decoration: none;
       border-bottom: 1px solid rgba(0, 0, 0, 0.25);
@@ -153,15 +119,7 @@
       background: #ffd89a;
     }
   </style>
-</head>
 
-<body>
-
-  <nav id="styleMenu">
-    <a href="#" id="satellite">Satellite</a>
-    <a href="#" id="outdoors">Outdoors</a>
-    <a href="#" id="dark">Dark</a>
-  </nav>
   <nav id="menu"></nav>
   <div id='map'></div>
   <script>
@@ -176,30 +134,20 @@
       };
     };
 
-    mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4OWZ4Mmt2MTV3YjJycHZkMmlzcWI2NSJ9.oMo7f3apUlEXGgcnTWkTPg';
-
+    //YOUR TURN: add your Mapbox token
+    mapboxgl.accessToken = 'pk.eyJ1Ijoib29oYWxha2thZGkiLCJhIjoiY2x4OWZ4Mmt2MTV3YjJycHZkMmlzcWI2NSJ9.oMo7f3apUlEXGgcnTWkTPg'; //Mapbox token 
     var map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [35.222470, 31.938833],
-      zoom: 8.04,
+      container: 'map', // container id
+      style: 'mapbox://styles/oohalakkadi/clx9j4u9p01nv01rbbkmrcmfc', // mapbox://styles/mapbox/satellite-streets-v12 for satellite street // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+      center: [35.222470, 31.938833], // starting position [lng, lat]
+      zoom: 8.04,// starting zoom
       transformRequest: transformRequest
     });
-
-    function setStyle(styleId) {
-      map.setStyle(styleId);
-      map.on('style.load', () => {
-        addLayers();
-      });
-    }
-
-    document.getElementById('satellite').onclick = function () { setStyle('mapbox://styles/oohalakkadi/clxx2ho7n00yu01po22a4211w'); };
-    document.getElementById('outdoors').onclick = function () { setStyle('mapbox://styles/oohalakkadi/clxwvv3g6004401om6yr48l3d'); };
-    document.getElementById('dark').onclick = function () { setStyle('mapbox://styles/oohalakkadi/clxx2ggsp004f01rh1ked0p5e'); };
 
     $(document).ready(function () {
       $.ajax({
         type: "GET",
+        //YOUR TURN: Replace with csv export link
         url: 'https://docs.google.com/spreadsheets/d/19FiVC6W4ncKi86eWhYK5Udh6p0ud-aaXuyJW8gpngc0/gviz/tq?tqx=out:csv&sheet=Sheet1',
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
@@ -212,10 +160,126 @@
           delimiter: ','
         }, function (err, data) {
           map.on('load', function () {
-            addLayers();
+
+            //Reports Layer
+            map.addLayer({
+              'id': 'reports',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Report'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'library',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true, 
+                'text-allow-overlap': true, 
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Photo Layer
+            map.addLayer({
+              'id': 'photos',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Photo'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'attraction',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true, 
+                'text-allow-overlap': true, 
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Video Layer
+            map.addLayer({
+              'id': 'videos',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Video'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'cinema',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true, 
+                'text-allow-overlap': true, 
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Journalism Layer
+            map.addLayer({
+              'id': 'journalism',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Journalism'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'historic',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true, 
+                'text-allow-overlap': true, 
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            //Social Media Layer
+            map.addLayer({
+              'id': 'social media',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Social Media'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'mobile-phone',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true, 
+                'text-allow-overlap': true, 
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
             function addLayerFunctionality(layerId) {
+              // When a click event occurs on a feature in the csvData layer, open a popup at the
+              // location of the feature, with description HTML from its properties.
               map.on('click', layerId, function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
+
+                //set popup text
+                //You can adjust the values of the popup to match the headers of your CSV.
+                // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
                 var description = `
                   <h3>${e.features[0].properties.Name}</h3>
                   <h4><em>${e.features[0].properties.Date}</em></h4>
@@ -223,155 +287,63 @@
                   <h4>${e.features[0].properties.About}</h4>
                   <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
                 `;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
+
+                //add Popup to map
                 new mapboxgl.Popup()
                   .setLngLat(coordinates)
                   .setHTML(description)
                   .addTo(map);
               });
+
+              // Change the cursor to a pointer when the mouse is over the places layer.
               map.on('mouseenter', layerId, function () {
                 map.getCanvas().style.cursor = 'pointer';
               });
+
+              // Change it back to a pointer when it leaves.
               map.on('mouseleave', layerId, function () {
                 map.getCanvas().style.cursor = '';
               });
+
               var bbox = turf.bbox(data);
               map.fitBounds(bbox, { padding: 50 });
             }
 
-            function addLayers() {
-              const layers = ['reports', 'photos', 'journalism', 'social media', 'videos'];
-              layers.forEach(layerId => {
-                if (map.getSource(layerId)) {
-                  map.removeLayer(layerId);
-                  map.removeSource(layerId);
-                }
-              });
+            ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
+              addLayerFunctionality(layerId);
+            });
 
-              layers.forEach(layerId => {
-                map.addSource(layerId, {
-                  'type': 'geojson',
-                  'data': data
-                });
-              });
-
-              map.addLayer({
-                'id': 'reports',
-                'type': 'symbol',
-                'filter': ['==', 'Format', 'Report'],
-                'source': 'reports',
-                'layout': {
-                  'icon-image': 'library',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                'paint': {
-                  'icon-color': "white"
-                }
-              });
-
-              map.addLayer({
-                'id': 'photos',
-                'type': 'symbol',
-                'filter': ['==', 'Format', 'Photo'],
-                'source': 'photos',
-                'layout': {
-                  'icon-image': 'attraction',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                'paint': {
-                  'icon-color': "white"
-                }
-              });
-
-              map.addLayer({
-                'id': 'videos',
-                'type': 'symbol',
-                'filter': ['==', 'Format', 'Video'],
-                'source': 'videos',
-                'layout': {
-                  'icon-image': 'cinema',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                'paint': {
-                  'icon-color': "white"
-                }
-              });
-
-              map.addLayer({
-                'id': 'journalism',
-                'type': 'symbol',
-                'filter': ['==', 'Format', 'Journalism'],
-                'source': 'journalism',
-                'layout': {
-                  'icon-image': 'historic',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                'paint': {
-                  'icon-color': "white"
-                }
-              });
-
-              map.addLayer({
-                'id': 'social media',
-                'type': 'symbol',
-                'filter': ['==', 'Format', 'Social Media'],
-                'source': 'social media',
-                'layout': {
-                  'icon-image': 'mobile-phone',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                'paint': {
-                  'icon-color': "white"
-                }
-              });
-
-              layers.forEach(layerId => {
-                addLayerFunctionality(layerId);
-              });
-            }
-
-            addLayers();
           });
         });
       }
     });
 
     map.on('idle', () => {
-      const toggleableLayerIds = ['reports', 'photos', 'journalism', 'social media', 'videos'];
+      // Enumerate ids of the layers.
+      const toggleableLayerIds = ['satellite', 'reports', 'photos', 'journalism', 'social media', 'videos'];
 
+      // Set up the corresponding toggle button for each layer.
       for (const id of toggleableLayerIds) {
+        // Skip layers that already have a button set up.
         if (document.getElementById(id)) {
           continue;
         }
 
+        // Create a link.
         const link = document.createElement('a');
         link.id = id;
         link.href = '#';
         link.textContent = id;
         link.className = 'active';
 
+        // Show or hide layer when the toggle is clicked.
         link.onclick = function (e) {
           const clickedLayer = this.textContent;
           e.preventDefault();
@@ -382,16 +354,32 @@
             'visibility'
           );
 
-          if (visibility === 'visible') {
-            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-            this.className = '';
+          if (clickedLayer == 'satellite') {
+            if (visibility === 'visible') {
+              map.setLayoutProperty('satellite', 'visibility', 'none');
+              map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'none');
+              map.setLayoutProperty('country-boundaries copy', 'visibility', 'none');
+              map.setLayoutProperty('water (1)', 'visibility', 'none');
+              this.className = '';
+            } else {
+              this.className = 'active';
+              map.setLayoutProperty('country-boundaries (1) copy', 'visibility', 'visible');
+              map.setLayoutProperty('country-boundaries copy', 'visibility', 'visible');
+              map.setLayoutProperty('water (1)', 'visibility', 'visible');
+              map.setLayoutProperty('satellite', 'visibility', 'visible');
+            }
           } else {
-            this.className = 'active';
-            map.setLayoutProperty(
-              clickedLayer,
-              'visibility',
-              'visible'
-            );
+            if (visibility === 'visible') {
+              map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+              this.className = '';
+            } else {
+              this.className = 'active';
+              map.setLayoutProperty(
+                clickedLayer,
+                'visibility',
+                'visible'
+              );
+            }
           }
         };
 
