@@ -168,120 +168,127 @@
           delimiter: ','
         }, function(err, data) {
           map.on('load', function() {
-            addLayers(data);
+            addClusters(data);
           });
 
           map.on('styledata', function() {
-            addLayers(data);
+            addClusters(data);
           });
 
-          function addLayers(data) {
+          function addClusters(data) {
+            // Add a new source from our GeoJSON data and set the 'cluster' option to true.
+            map.addSource('places', {
+              type: 'geojson',
+              data: data,
+              cluster: true,
+              clusterMaxZoom: 14, // Max zoom to cluster points on
+              clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+            });
+
+            // Clustered points layer
             map.addLayer({
-              'id': 'reports',
-              'type': 'symbol',
-              'filter': ['==', 'Format', 'Report'],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
-                'icon-image': 'library',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              'paint': {
-                'icon-color': "white"
+              id: 'clusters',
+              type: 'circle',
+              source: 'places',
+              filter: ['has', 'point_count'],
+              paint: {
+                'circle-color': [
+                  'step',
+                  ['get', 'point_count'],
+                  '#51bbd6',
+                  10,
+                  '#f1f075',
+                  50,
+                  '#f28cb1'
+                ],
+                'circle-radius': [
+                  'step',
+                  ['get', 'point_count'],
+                  15,
+                  10,
+                  20,
+                  50,
+                  25
+                ]
               }
             });
 
+            // Cluster count label layer
             map.addLayer({
-              'id': 'photos',
-              'type': 'symbol',
-              'filter': ['==', 'Format', 'Photo'],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
-                'icon-image': 'attraction',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              'paint': {
-                'icon-color': "white"
+              id: 'cluster-count',
+              type: 'symbol',
+              source: 'places',
+              filter: ['has', 'point_count'],
+              layout: {
+                'text-field': '{point_count_abbreviated}',
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 12
               }
             });
 
+            // Unclustered points layer
             map.addLayer({
-              'id': 'videos',
-              'type': 'symbol',
-              'filter': ['==', 'Format', 'Video'],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
-                'icon-image': 'cinema',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              'paint': {
-                'icon-color': "white"
+              id: 'unclustered-point',
+              type: 'symbol',
+              source: 'places',
+              filter: ['!', ['has', 'point_count']],
+              layout: {
+                'icon-image': 'marker-15',
+                'icon-size': 1.5
               }
             });
 
-            map.addLayer({
-              'id': 'journalism',
-              'type': 'symbol',
-              'filter': ['==', 'Format', 'Journalism'],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
-                'icon-image': 'historic',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              'paint': {
-                'icon-color': "white"
+            // Add popups for unclustered points
+            map.on('click', 'unclustered-point', function (e) {
+              var coordinates = e.features[0].geometry.coordinates.slice();
+              var description = `
+                <h3>${e.features[0].properties.Name}</h3>
+                <h4><em>${e.features[0].properties.Date}</em></h4>
+                <h4><b>${e.features[0].properties.Address}</b></h4>
+                <h4>${e.features[0].properties.About}</h4>
+                <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
+              `;
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
+              new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
             });
 
-            map.addLayer({
-              'id': 'social media',
-              'type': 'symbol',
-              'filter': ['==', 'Format', 'Social Media'],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
-                'icon-image': 'mobile-phone',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              'paint': {
-                'icon-color': "white"
-              }
+            // Zoom into cluster on click
+            map.on('click', 'clusters', function (e) {
+              var features = map.queryRenderedFeatures(e.point, {
+                layers: ['clusters']
+              });
+              var clusterId = features[0].properties.cluster_id;
+              map.getSource('places').getClusterExpansionZoom(
+                clusterId,
+                function (err, zoom) {
+                  if (err) return;
+
+                  map.easeTo({
+                    center: features[0].geometry.coordinates,
+                    zoom: zoom
+                  });
+                }
+              );
             });
 
-            function addLayerFunctionality(layerId) {
+            map.on('mouseenter', 'clusters', function () {
+              map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'clusters', function () {
+              map.getCanvas().style.cursor = '';
+            });
+
+            addLayerFunctionality();
+          }
+
+          function addLayerFunctionality() {
+            const layerIds = ['reports', 'photos', 'videos', 'journalism', 'social media'];
+            for (const layerId of layerIds) {
               map.on('click', layerId, function(e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = `
@@ -311,10 +318,6 @@
               var bbox = turf.bbox(data);
               map.fitBounds(bbox, { padding: 50 });
             }
-
-            ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
-              addLayerFunctionality(layerId);
-            });
           }
         });
       }
