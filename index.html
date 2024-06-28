@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset='utf-8' />
   <title>Olives & Sheep</title>
@@ -15,33 +14,26 @@
       margin: 0;
       padding: 0;
     }
-
     #map {
       position: absolute;
       top: 0;
       bottom: 0;
       width: 100%;
     }
-
-    /* Popup styling */
     .mapboxgl-popup {
       padding-bottom: 5px;
     }
-
     .mapboxgl-popup-close-button {
       display: none;
     }
-
     .mapboxgl-popup-content {
       font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
       padding: 0;
       width: 250px;
     }
-
     .mapboxgl-popup-content-wrapper {
       padding: 1%;
     }
-
     .mapboxgl-popup-content h3 {
       background: rgb(61, 59, 59);
       text-align: center;
@@ -52,26 +44,21 @@
       font-weight: 700;
       margin-top: -5px;
     }
-
     .mapboxgl-popup-content h4 {
       margin: 0;
       display: block;
       padding: 10px 3px 10px 10px;
       font-weight: 400;
     }
-
     .mapboxgl-container {
       cursor: pointer;
     }
-
     .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
       margin-top: 3px;
     }
-
     .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
       border-bottom-color: rgb(61, 59, 59);
     }
-
     #menu, #basemap-menu {
       background: #fff;
       position: absolute;
@@ -81,17 +68,14 @@
       border: 1px solid rgba(0, 0, 0, 0.4);
       font-family: 'Helvetica Neue', sans-serif;
     }
-
     #menu {
       top: 10px;
       right: 10px;
     }
-
     #basemap-menu {
       top: 10px;
       left: 10px;
     }
-
     #menu a, #basemap-menu a {
       font-size: 13px;
       color: #404040;
@@ -102,21 +86,17 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.25);
       text-align: center;
     }
-
     #menu a:last-child, #basemap-menu a:last-child {
       border: none;
     }
-
     #menu a:hover, #basemap-menu a:hover {
       background-color: #f8f8f8;
       color: #404040;
     }
-
     #menu a.active, #basemap-menu a.active {
       background-color: #ffe7c1;
       color: #000000;
     }
-
     #menu a.active:hover, #basemap-menu a.active:hover {
       background: #ffd89a;
     }
@@ -188,7 +168,14 @@
           delimiter: ','
         }, function(err, data) {
           map.on('load', function() {
+            addLayers(data);
+          });
 
+          map.on('styledata', function() {
+            addLayers(data);
+          });
+
+          function addLayers(data) {
             map.addLayer({
               'id': 'reports',
               'type': 'symbol',
@@ -328,7 +315,7 @@
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
             });
-          });
+          }
         });
       }
     });
@@ -369,5 +356,4 @@
     });
   </script>
 </body>
-
 </html>
