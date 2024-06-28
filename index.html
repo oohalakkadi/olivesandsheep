@@ -176,6 +176,22 @@
       }
     });
 
+    const symbolLayers = ['reports', 'photos', 'videos', 'journalism', 'social media'];
+    const filters = {
+      'reports': ['==', 'Format', 'Report'],
+      'photos': ['==', 'Format', 'Photo'],
+      'videos': ['==', 'Format', 'Video'],
+      'journalism': ['==', 'Format', 'Journalism'],
+      'social media': ['==', 'Format', 'Social Media']
+    };
+
+    function updateClusterFilters() {
+      const activeLayers = symbolLayers.filter(layerId => map.getLayoutProperty(layerId, 'visibility') !== 'none');
+      const clusterFilters = activeLayers.map(layerId => filters[layerId]);
+      map.setFilter('clusters', ['any', ...clusterFilters]);
+      map.setFilter('cluster-count', ['any', ...clusterFilters]);
+    }
+
     $(document).ready(function () {
       $.ajax({
         type: "GET",
@@ -266,95 +282,29 @@
             });
 
             // Add other layers with filters
-            map.addLayer({
-              id: 'reports',
-              type: 'symbol',
-              source: 'data',
-              filter: ['==', 'Format', 'Report'],
-              layout: {
-                'icon-image': 'library',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              paint: {
-                'icon-color': "white"
-              }
+            symbolLayers.forEach(layerId => {
+              map.addLayer({
+                id: layerId,
+                type: 'symbol',
+                source: 'data',
+                filter: filters[layerId],
+                layout: {
+                  'icon-image': layerId === 'reports' ? 'library' :
+                    layerId === 'photos' ? 'attraction' :
+                      layerId === 'videos' ? 'cinema' :
+                        layerId === 'journalism' ? 'historic' : 'mobile-phone',
+                  'icon-size': 2,
+                  'icon-allow-overlap': true,
+                  'icon-ignore-placement': true,
+                  'text-allow-overlap': true,
+                  'text-ignore-placement': true
+                },
+                paint: {
+                  'icon-color': "white"
+                }
+              });
             });
 
-            map.addLayer({
-              id: 'photos',
-              type: 'symbol',
-              source: 'data',
-              filter: ['==', 'Format', 'Photo'],
-              layout: {
-                'icon-image': 'attraction',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              paint: {
-                'icon-color': "white"
-              }
-            });
-
-            map.addLayer({
-              id: 'videos',
-              type: 'symbol',
-              source: 'data',
-              filter: ['==', 'Format', 'Video'],
-              layout: {
-                'icon-image': 'cinema',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              paint: {
-                'icon-color': "white"
-              }
-            });
-
-            map.addLayer({
-              id: 'journalism',
-              type: 'symbol',
-              source: 'data',
-              filter: ['==', 'Format', 'Journalism'],
-              layout: {
-                'icon-image': 'historic',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              paint: {
-                'icon-color': "white"
-              }
-            });
-
-            map.addLayer({
-              id: 'social media',
-              type: 'symbol',
-              source: 'data',
-              filter: ['==', 'Format', 'Social Media'],
-              layout: {
-                'icon-image': 'mobile-phone',
-                'icon-size': 2,
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
-              },
-              paint: {
-                'icon-color': "white"
-              }
-            });
 
             function addLayerFunctionality(layerId) {
               map.on('click', layerId, function (e) {
@@ -423,11 +373,15 @@
             this.className = 'active';
             map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
           }
+
+          updateClusterFilters();
         };
 
         const layers = document.getElementById('menu');
         layers.appendChild(link);
       }
+
+      updateClusterFilters();
     });
   </script>
 </body>
