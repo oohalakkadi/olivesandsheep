@@ -201,6 +201,7 @@
           });
 
           function addLayers(data) {
+            // Add GeoJSON source with clustering
             map.addSource('data', {
               type: 'geojson',
               data: data,
@@ -209,63 +210,68 @@
               clusterRadius: 50
             });
 
+            // Add clustered layer
             map.addLayer({
-              'id': 'clusters',
-              'type': 'circle',
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'filter': ['has', 'point_count'],
-              'paint': {
-                //   * Blue, 20px circles when point count is less than 100
-                //   * Yellow, 30px circles when point count is between 100 and 750
-                //   * Pink, 40px circles when point count is greater than or equal to 750
+              id: 'clusters',
+              type: 'circle',
+              source: 'data',
+              filter: ['has', 'point_count'],
+              paint: {
                 'circle-color': [
                   'step',
                   ['get', 'point_count'],
                   '#51bbd6',
-                  100,
+                  20,
                   '#f1f075',
-                  750,
+                  100,
                   '#f28cb1'
                 ],
                 'circle-radius': [
                   'step',
                   ['get', 'point_count'],
                   20,
-                  100,
+                  20,
                   30,
-                  750,
+                  100,
                   40
                 ]
               }
             });
 
+            // Add cluster count layer
             map.addLayer({
-              'id': 'cluster-count',
-              'type': 'symbol',
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'filter': ['has', 'point_count'],
-              'layout': {
-                'text-field': ['get', 'point_count_abbreviated'],
+              id: 'cluster-count',
+              type: 'symbol',
+              source: 'data',
+              filter: ['has', 'point_count'],
+              layout: {
+                'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 12
               }
             });
 
+            // // Add unclustered points layer
+            // map.addLayer({
+            //   id: 'unclustered-point',
+            //   type: 'circle',
+            //   source: 'data',
+            //   filter: ['!', ['has', 'point_count']],
+            //   paint: {
+            //     'circle-color': '#11b4da',
+            //     'circle-radius': 4,
+            //     'circle-stroke-width': 1,
+            //     'circle-stroke-color': '#fff'
+            //   }
+            // });
+
+            // Add other layers with filters
             map.addLayer({
-              'id': 'reports',
-              'type': 'symbol',
-              'filter': ['all', ['==', 'Format', 'Report'], ['!', ['has', 'point_count']]],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
+              id: 'reports',
+              type: 'symbol',
+              source: 'data',
+              filter: ['all', ['==', 'Format', 'Report'], ['!', ['has', 'point_count']]],
+              layout: {
                 'icon-image': 'library',
                 'icon-size': 2,
                 'icon-allow-overlap': true,
@@ -273,20 +279,17 @@
                 'text-allow-overlap': true,
                 'text-ignore-placement': true
               },
-              'paint': {
+              paint: {
                 'icon-color': "white"
               }
             });
 
             map.addLayer({
-              'id': 'photos',
-              'type': 'symbol',
-              'filter': ['all', ['==', 'Format', 'Photo'], ['!', ['has', 'point_count']]],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
+              id: 'photos',
+              type: 'symbol',
+              source: 'data',
+              filter: ['all', ['==', 'Format', 'Photo'], ['!', ['has', 'point_count']]],
+              layout: {
                 'icon-image': 'attraction',
                 'icon-size': 2,
                 'icon-allow-overlap': true,
@@ -294,20 +297,17 @@
                 'text-allow-overlap': true,
                 'text-ignore-placement': true
               },
-              'paint': {
+              paint: {
                 'icon-color': "white"
               }
             });
 
             map.addLayer({
-              'id': 'videos',
-              'type': 'symbol',
-              'filter': ['all', ['==', 'Format', 'Video'], ['!', ['has', 'point_count']]],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
+              id: 'videos',
+              type: 'symbol',
+              source: 'data',
+              filter: ['all', ['==', 'Format', 'Video'], ['!', ['has', 'point_count']]],
+              layout: {
                 'icon-image': 'cinema',
                 'icon-size': 2,
                 'icon-allow-overlap': true,
@@ -315,20 +315,17 @@
                 'text-allow-overlap': true,
                 'text-ignore-placement': true
               },
-              'paint': {
+              paint: {
                 'icon-color': "white"
               }
             });
 
             map.addLayer({
-              'id': 'journalism',
-              'type': 'symbol',
-              'filter': ['all', ['==', 'Format', 'Journalism'], ['!', ['has', 'point_count']]],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
+              id: 'journalism',
+              type: 'symbol',
+              source: 'data',
+              filter: ['all', ['==', 'Format', 'Journalism'], ['!', ['has', 'point_count']]],
+              layout: {
                 'icon-image': 'historic',
                 'icon-size': 2,
                 'icon-allow-overlap': true,
@@ -336,20 +333,17 @@
                 'text-allow-overlap': true,
                 'text-ignore-placement': true
               },
-              'paint': {
+              paint: {
                 'icon-color': "white"
               }
             });
 
             map.addLayer({
-              'id': 'social media',
-              'type': 'symbol',
-              'filter': ['all', ['==', 'Format', 'Social Media'], ['!', ['has', 'point_count']]],
-              'source': {
-                'type': 'geojson',
-                'data': data
-              },
-              'layout': {
+              id: 'social media',
+              type: 'symbol',
+              source: 'data',
+              filter: ['all', ['==', 'Format', 'Social Media'], ['!', ['has', 'point_count']]],
+              layout: {
                 'icon-image': 'mobile-phone',
                 'icon-size': 2,
                 'icon-allow-overlap': true,
@@ -357,7 +351,7 @@
                 'text-allow-overlap': true,
                 'text-ignore-placement': true
               },
-              'paint': {
+              paint: {
                 'icon-color': "white"
               }
             });
