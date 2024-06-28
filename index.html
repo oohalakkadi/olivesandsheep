@@ -148,18 +148,6 @@
         var styleId = e.target.id;
         map.setStyle(basemaps[styleId]);
         e.target.classList.add('active');
-
-        // Add the source and layers back after style change
-        map.once('styledata', () => {
-          $.ajax({
-            type: "GET",
-            url: 'https://docs.google.com/spreadsheets/d/19FiVC6W4ncKi86eWhYK5Udh6p0ud-aaXuyJW8gpngc0/gviz/tq?tqx=out:csv&sheet=Sheet1',
-            dataType: "text",
-            success: function(csvData) {
-              makeGeoJSON(csvData);
-            }
-          });
-        });
       }
     });
 
@@ -180,13 +168,6 @@
           delimiter: ','
         }, function(err, data) {
           map.on('load', function() {
-            map.addSource('points', {
-              type: 'geojson',
-              data: data,
-              cluster: true,
-              clusterMaxZoom: 14,
-              clusterRadius: 50
-            });
             addLayers(data);
           });
 
@@ -195,120 +176,144 @@
           });
 
           function addLayers(data) {
-            if (!map.getLayer('clusters')) {
-              map.addLayer({
-                id: 'clusters',
-                type: 'circle',
-                source: 'points',
-                filter: ['has', 'point_count'],
-                paint: {
-                  'circle-color': [
-                    'step',
-                    ['get', 'point_count'],
-                    '#51bbd6',
-                    100,
-                    '#f1f075',
-                    750,
-                    '#f28cb1'
-                  ],
-                  'circle-radius': [
-                    'step',
-                    ['get', 'point_count'],
-                    20,
-                    100,
-                    30,
-                    750,
-                    40
-                  ]
-                }
-              });
-            }
-
-            if (!map.getLayer('cluster-count')) {
-              map.addLayer({
-                id: 'cluster-count',
-                type: 'symbol',
-                source: 'points',
-                filter: ['has', 'point_count'],
-                layout: {
-                  'text-field': '{point_count_abbreviated}',
-                  'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                  'text-size': 12
-                }
-              });
-            }
-
-            if (!map.getLayer('unclustered-point')) {
-              map.addLayer({
-                id: 'unclustered-point',
-                type: 'symbol',
-                source: 'points',
-                filter: ['!', ['has', 'point_count']],
-                layout: {
-                  'icon-image': ['get', 'icon'],
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                paint: {
-                  'icon-color': "white"
-                }
-              });
-            }
-
-            // Functionality for existing layers with filter to avoid clustered points
-            function addLayerWithFilter(layerId, iconImage) {
-              if (!map.getLayer(layerId)) {
-                map.addLayer({
-                  id: layerId,
-                  type: 'symbol',
-                  source: 'points',
-                  filter: ['all', ['==', 'Format', layerId], ['!', ['has', 'point_count']]],
-                  layout: {
-                    'icon-image': iconImage,
-                    'icon-size': 2,
-                    'icon-allow-overlap': true,
-                    'icon-ignore-placement': true,
-                    'text-allow-overlap': true,
-                    'text-ignore-placement': true
-                  },
-                  paint: {
-                    'icon-color': "white"
-                  }
-                });
-
-                map.on('click', layerId, function(e) {
-                  var coordinates = e.features[0].geometry.coordinates.slice();
-                  var description = `
-                    <h3>${e.features[0].properties.Name}</h3>
-                    <h4><em>${e.features[0].properties.Date}</em></h4>
-                    <h4><b>${e.features[0].properties.Address}</b></h4>
-                    <h4>${e.features[0].properties.About}</h4>
-                    <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
-                  `;
-                  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                  }
-                  new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(map);
-                });
-
-                map.on('mouseenter', layerId, function() {
-                  map.getCanvas().style.cursor = 'pointer';
-                });
-
-                map.on('mouseleave', layerId, function() {
-                  map.getCanvas().style.cursor = '';
-                });
+            map.addLayer({
+              'id': 'reports',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Report'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'library',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
               }
+            });
+
+            map.addLayer({
+              'id': 'photos',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Photo'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'attraction',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            map.addLayer({
+              'id': 'videos',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Video'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'cinema',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            map.addLayer({
+              'id': 'journalism',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Journalism'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'historic',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            map.addLayer({
+              'id': 'social media',
+              'type': 'symbol',
+              'filter': ['==', 'Format', 'Social Media'],
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'layout': {
+                'icon-image': 'mobile-phone',
+                'icon-size': 2,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+              },
+              'paint': {
+                'icon-color': "white"
+              }
+            });
+
+            function addLayerFunctionality(layerId) {
+              map.on('click', layerId, function(e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = `
+                  <h3>${e.features[0].properties.Name}</h3>
+                  <h4><em>${e.features[0].properties.Date}</em></h4>
+                  <h4><b>${e.features[0].properties.Address}</b></h4>
+                  <h4>${e.features[0].properties.About}</h4>
+                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
+                `;
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+                new mapboxgl.Popup()
+                  .setLngLat(coordinates)
+                  .setHTML(description)
+                  .addTo(map);
+              });
+
+              map.on('mouseenter', layerId, function() {
+                map.getCanvas().style.cursor = 'pointer';
+              });
+
+              map.on('mouseleave', layerId, function() {
+                map.getCanvas().style.cursor = '';
+              });
+
+              var bbox = turf.bbox(data);
+              map.fitBounds(bbox, { padding: 50 });
             }
 
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
-              addLayerWithFilter(layerId, layerId);
+              addLayerFunctionality(layerId);
             });
           }
         });
@@ -348,47 +353,6 @@
         const layers = document.getElementById('menu');
         layers.appendChild(link);
       }
-    });
-
-    // Cluster interaction
-    map.on('click', 'clusters', function(e) {
-      var features = map.queryRenderedFeatures(e.point, {
-        layers: ['clusters']
-      });
-      var clusterId = features[0].properties.cluster_id;
-      map.getSource('points').getClusterExpansionZoom(clusterId, function(err, zoom) {
-        if (err) return;
-
-        map.easeTo({
-          center: features[0].geometry.coordinates,
-          zoom: zoom
-        });
-      });
-    });
-
-    map.on('click', 'unclustered-point', function(e) {
-      var coordinates = e.features[0].geometry.coordinates.slice();
-      var description = `
-        <h3>${e.features[0].properties.Name}</h3>
-        <h4><em>${e.features[0].properties.Date}</em></h4>
-        <h4><b>${e.features[0].properties.Address}</b></h4>
-        <h4>${e.features[0].properties.About}</h4>
-        <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
-      `;
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
-      new mapboxgl.Popup()
-        .setLngLat(coordinates)
-        .setHTML(description)
-        .addTo(map);
-    });
-
-    map.on('mouseenter', 'clusters', function() {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'clusters', function() {
-      map.getCanvas().style.cursor = '';
     });
   </script>
 </body>
