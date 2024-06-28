@@ -185,13 +185,6 @@
       'social media': ['==', 'Format', 'Social Media']
     };
 
-    function updateClusterFilters() {
-      const activeLayers = symbolLayers.filter(layerId => map.getLayoutProperty(layerId, 'visibility') !== 'none');
-      const clusterFilters = activeLayers.map(layerId => filters[layerId]);
-      map.setFilter('clusters', ['any', ...clusterFilters]);
-      map.setFilter('cluster-count', ['any', ...clusterFilters]);
-    }
-
     $(document).ready(function () {
       $.ajax({
         type: "GET",
@@ -373,15 +366,11 @@
             this.className = 'active';
             map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
           }
-
-          updateClusterFilters();
         };
 
         const layers = document.getElementById('menu');
         layers.appendChild(link);
       }
-
-      updateClusterFilters();
     });
   </script>
 </body>
