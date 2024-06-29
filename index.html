@@ -185,6 +185,8 @@
       'social media': ['==', 'Format', 'Social Media']
     };
 
+    let originalData; // Variable to store original GeoJSON data
+
     $(document).ready(function () {
       $.ajax({
         type: "GET",
@@ -201,6 +203,7 @@
           lonfield: 'Longitude',
           delimiter: ','
         }, function (err, data) {
+          originalData = data; // Store original data
           map.on('load', function () {
             addLayers(data);
           });
@@ -303,12 +306,12 @@
               map.on('click', layerId, function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = `
-                  <h3>${e.features[0].properties.Name}</h3>
-                  <h4><em>${e.features[0].properties.Date}</em></h4>
-                  <h4><b>${e.features[0].properties.Address}</b></h4>
-                  <h4>${e.features[0].properties.About}</h4>
-                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
-                `;
+              <h3>${e.features[0].properties.Name}</h3>
+              <h4><em>${e.features[0].properties.Date}</em></h4>
+              <h4><b>${e.features[0].properties.Address}</b></h4>
+              <h4>${e.features[0].properties.About}</h4>
+              <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
+            `;
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
@@ -336,42 +339,62 @@
           }
         });
       }
-    });
 
-    map.on('idle', () => {
-      const toggleableLayerIds = ['reports', 'photos', 'journalism', 'social media', 'videos'];
+      function updateClusterData() {
+        let filteredFeatures = originalData.features.filter(feature => {
+          let format = feature.properties.Format;
+          return !symbolLayers.some(layerId => {
+            const visibility = map.getLayoutProperty(layerId, 'visibility');
+            return visibility === 'none' && filters[layerId][2] === format;
+          });
+        });
 
-      for (const id of toggleableLayerIds) {
-        if (document.getElementById(id)) {
-          continue;
-        }
-
-        const link = document.createElement('a');
-        link.id = id;
-        link.href = '#';
-        link.textContent = id;
-        link.className = 'active';
-
-        link.onclick = function (e) {
-          const clickedLayer = this.textContent;
-          e.preventDefault();
-          e.stopPropagation();
-
-          const visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-
-          if (visibility === 'visible') {
-            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-            this.className = '';
-          } else {
-            this.className = 'active';
-            map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-          }
+        let updatedData = {
+          ...originalData,
+          features: filteredFeatures
         };
 
-        const layers = document.getElementById('menu');
-        layers.appendChild(link);
+        map.getSource('data').setData(updatedData);
       }
+
+      map.on('idle', () => {
+        const toggleableLayerIds = ['reports', 'photos', 'journalism', 'social media', 'videos'];
+
+        for (const id of toggleableLayerIds) {
+          if (document.getElementById(id)) {
+            continue;
+          }
+
+          const link = document.createElement('a');
+          link.id = id;
+          link.href = '#';
+          link.textContent = id;
+          link.className = 'active';
+
+          link.onclick = function (e) {
+            const clickedLayer = this.textContent;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+            if (visibility === 'visible') {
+              map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+              this.className = '';
+            } else {
+              this.className = 'active';
+              map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+            }
+
+            updateClusterData();
+          };
+
+          const layers = document.getElementById('menu');
+          layers.appendChild(link);
+        }
+      });
     });
+
   </script>
 </body>
 
