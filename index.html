@@ -230,18 +230,16 @@
           lonfield: 'Longitude',
           delimiter: ','
         }, function (err, data) {
-          // Add the GeoJSON data to the map on 'load' event
           map.on('load', function () {
             addLayers(data);
           });
 
-          // Add the GeoJSON data to the map on 'styledata' event
           map.on('styledata', function () {
             addLayers(data);
           });
 
           function addLayers(data) {
-            try {
+            if (!map.getSource('data')) {
               // Add GeoJSON source with clustering
               map.addSource('data', {
                 type: 'geojson',
@@ -250,92 +248,96 @@
                 clusterMaxZoom: 14,
                 clusterRadius: 50
               });
-            } catch (e) {
-              // If the source already exists, ignore the error
-              if (e.message !== 'There is already a source with this ID.') {
-                throw e;
-              }
+            } else {
+              map.getSource('data').setData(data);
             }
 
             // Add clustered layer
-            map.addLayer({
-              id: 'clusters',
-              type: 'circle',
-              source: 'data',
-              filter: ['has', 'point_count'],
-              paint: {
-                'circle-color': [
-                  'step',
-                  ['get', 'point_count'],
-                  '#51bbd6',
-                  5,
-                  '#f1f075',
-                  10,
-                  '#f28cb1'
-                ],
-                'circle-radius': [
-                  'step',
-                  ['get', 'point_count'],
-                  20,
-                  5,
-                  30,
-                  10,
-                  40
-                ]
-              }
-            });
+            if (!map.getLayer('clusters')) {
+              map.addLayer({
+                id: 'clusters',
+                type: 'circle',
+                source: 'data',
+                filter: ['has', 'point_count'],
+                paint: {
+                  'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#51bbd6',
+                    5,
+                    '#f1f075',
+                    10,
+                    '#f28cb1'
+                  ],
+                  'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    20,
+                    5,
+                    30,
+                    10,
+                    40
+                  ]
+                }
+              });
+            }
 
             // Add cluster count layer
-            map.addLayer({
-              id: 'cluster-count',
-              type: 'symbol',
-              source: 'data',
-              filter: ['has', 'point_count'],
-              layout: {
-                'text-field': '{point_count_abbreviated}',
-                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 12
-              }
-            });
+            if (!map.getLayer('cluster-count')) {
+              map.addLayer({
+                id: 'cluster-count',
+                type: 'symbol',
+                source: 'data',
+                filter: ['has', 'point_count'],
+                layout: {
+                  'text-field': '{point_count_abbreviated}',
+                  'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                  'text-size': 12
+                }
+              });
+            }
 
             // Add unclustered points layer
-            map.addLayer({
-              id: 'unclustered-point',
-              type: 'circle',
-              source: 'data',
-              filter: ['!', ['has', 'point_count']],
-              paint: {
-                'circle-color': '#11b4da',
-                'circle-radius': 4,
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
-              }
-            });
+            if (!map.getLayer('unclustered-point')) {
+              map.addLayer({
+                id: 'unclustered-point',
+                type: 'circle',
+                source: 'data',
+                filter: ['!', ['has', 'point_count']],
+                paint: {
+                  'circle-color': '#11b4da',
+                  'circle-radius': 4,
+                  'circle-stroke-width': 1,
+                  'circle-stroke-color': '#fff'
+                }
+              });
+            }
 
             // Add other layers with filters
             symbolLayers.forEach(layerId => {
-              map.addLayer({
-                id: layerId,
-                type: 'symbol',
-                source: 'data',
-                filter: filters[layerId],
-                layout: {
-                  'icon-image': layerId === 'reports' ? 'library' :
-                    layerId === 'photos' ? 'attraction' :
-                      layerId === 'videos' ? 'cinema' :
-                        layerId === 'journalism' ? 'historic' : 'mobile-phone',
-                  'icon-size': 2,
-                  'icon-allow-overlap': true,
-                  'icon-ignore-placement': true,
-                  'text-allow-overlap': true,
-                  'text-ignore-placement': true
-                },
-                paint: {
-                  'icon-color': "white"
-                }
-              });
+              if (!map.getLayer(layerId)) {
+                map.addLayer({
+                  id: layerId,
+                  type: 'symbol',
+                  source: 'data',
+                  filter: filters[layerId],
+                  layout: {
+                    'icon-image': layerId === 'reports' ? 'library' :
+                      layerId === 'photos' ? 'attraction' :
+                        layerId === 'videos' ? 'cinema' :
+                          layerId === 'journalism' ? 'historic' : 'mobile-phone',
+                    'icon-size': 2,
+                    'icon-allow-overlap': true,
+                    'icon-ignore-placement': true,
+                    'text-allow-overlap': true,
+                    'text-ignore-placement': true
+                  },
+                  paint: {
+                    'icon-color': "white"
+                  }
+                });
+              }
             });
-
 
             function addLayerFunctionality(layerId) {
               map.on('click', layerId, function (e) {
@@ -371,6 +373,7 @@
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
             });
+
             updateClusterSource();
           }
         });
