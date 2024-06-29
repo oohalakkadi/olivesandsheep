@@ -301,6 +301,109 @@
               });
             });
 
+            function distributePointsEquidistantly(geojson, radius) {
+              const grouped = {};
+
+              // Group points by location
+              geojson.features.forEach(feature => {
+                const [lng, lat] = feature.geometry.coordinates;
+                const key = `${lng},${lat}`;
+                if (!grouped[key]) {
+                  grouped[key] = [];
+                }
+                grouped[key].push(feature);
+              });
+
+              const newFeatures = [];
+
+              // Distribute points around the original location
+              Object.keys(grouped).forEach(key => {
+                const group = grouped[key];
+                if (group.length === 1) {
+                  newFeatures.push(group[0]);
+                } else {
+                  const angleIncrement = (2 * Math.PI) / group.length;
+
+                  group.forEach((feature, index) => {
+                    const [lng, lat] = feature.geometry.coordinates;
+                    if (index === 0) {
+                      // Add the central small circle
+                      newFeatures.push({
+                        ...feature,
+                        properties: { ...feature.properties, type: 'center' },
+                        geometry: { ...feature.geometry }
+                      });
+                    } else {
+                      const angle = index * angleIncrement;
+                      const newLng = lng + radius * Math.cos(angle);
+                      const newLat = lat + radius * Math.sin(angle);
+                      newFeatures.push({
+                        ...feature,
+                        geometry: {
+                          ...feature.geometry,
+                          coordinates: [newLng, newLat]
+                        },
+                        properties: {
+                          ...feature.properties,
+                          originalCoordinates: [lng, lat] // Save original coordinates for line
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+
+              return { ...geojson, features: newFeatures };
+            }
+
+            const radius = 0.0001; // Adjust as necessary
+            const distributedGeojsonData = distributePointsEquidistantly(data, radius);
+
+            map.getSource('data').setData(distributedGeojsonData);
+
+            // Add central points layer
+            map.addLayer({
+              id: 'central-points',
+              type: 'circle',
+              source: 'data',
+              filter: ['==', 'type', 'center'],
+              paint: {
+                'circle-radius': 1,
+                'circle-color': '#000'
+              }
+            });
+
+            // Add lines connecting points to the center
+            const lineFeatures = distributedGeojsonData.features
+              .filter(feature => feature.properties.originalCoordinates)
+              .map(feature => ({
+                type: 'Feature',
+                geometry: {
+                  type: 'LineString',
+                  coordinates: [
+                    feature.properties.originalCoordinates,
+                    feature.geometry.coordinates
+                  ]
+                }
+              }));
+
+            map.addSource('lines', {
+              type: 'geojson',
+              data: {
+                type: 'FeatureCollection',
+                features: lineFeatures
+              }
+            });
+
+            map.addLayer({
+              id: 'lines',
+              type: 'line',
+              source: 'lines',
+              paint: {
+                'line-color': '#000',
+                'line-width': 1
+              }
+            });
 
             function addLayerFunctionality(layerId) {
               map.on('click', 'clusters', (e) => {
@@ -323,12 +426,12 @@
               map.on('click', layerId, function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = `
-              <h3>${e.features[0].properties.Name}</h3>
-              <h4><em>${e.features[0].properties.Date}</em></h4>
-              <h4><b>${e.features[0].properties.Address}</b></h4>
-              <h4>${e.features[0].properties.About}</h4>
-              <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
-            `;
+                  <h3>${e.features[0].properties.Name}</h3>
+                  <h4><em>${e.features[0].properties.Date}</em></h4>
+                  <h4><b>${e.features[0].properties.Address}</b></h4>
+                  <h4>${e.features[0].properties.About}</h4>
+                  <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
+                `;
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
