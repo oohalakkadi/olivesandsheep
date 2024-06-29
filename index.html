@@ -71,7 +71,7 @@
       border-bottom-color: rgb(61, 59, 59);
     }
 
-    #format-menu {
+    #olives-and-sheep {
       background: rgba(23, 0, 40, 0.75);
       position: absolute;
       z-index: 1;
@@ -94,7 +94,7 @@
       justify-content: space-around;
     }
 
-    #format-menu a {
+    #olives-and-sheep a {
       font-size: 13px;
       color: #ffffff;
       display: block;
@@ -116,24 +116,24 @@
       text-align: center;
     }
 
-    #format-menu a:last-child,
+    #olives-and-sheep a:last-child,
     #basemap-menu a:last-child {
       border: none;
     }
 
-    #format-menu a:hover,
+    #olives-and-sheep a:hover,
     #basemap-menu a:hover {
       background-color: rgba(89, 0, 136, 0.75);
       color: #fdfdfd;
     }
 
-    #format-menu a.active,
+    #olives-and-sheep a.active,
     #basemap-menu a.active {
       background-color: rgba(115, 0, 176, 0.75);
       color: #ffffff;
     }
 
-    #format-menu a.active:hover,
+    #olives-and-sheep a.active:hover,
     #basemap-menu a.active:hover {
       background: rgba(89, 0, 136, 0.75);
     }
@@ -141,7 +141,7 @@
 </head>
 
 <body>
-  <nav id="format-menu"></nav>
+  <nav id="olives-and-sheep"></nav>
   <nav id="basemap-menu">
     <a href="#" class="active" id="light">Light</a>
     <a href="#" id="dark">Dark</a>
@@ -419,7 +419,7 @@
             updateClusterData();
           };
 
-          const layers = document.getElementById('format-menu');
+          const layers = document.getElementById('olives-and-sheep');
           layers.appendChild(link);
         }
       });
