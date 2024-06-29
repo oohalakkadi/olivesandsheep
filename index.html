@@ -10,8 +10,6 @@
   <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
-  <script src="https://unpkg.com/mapboxgl-spiderifier@latest/dist/mapboxgl-spiderifier.js"></script>
-  <link href="https://unpkg.com/mapboxgl-spiderifier@latest/dist/mapboxgl-spiderifier.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -323,42 +321,6 @@
 
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
-            });
-
-            var spiderifier = new MapboxglSpiderifier(map, {
-              onClick: function (e, spiderLeg) {
-                console.log('Clicked on ', spiderLeg);
-              },
-              markerWidth: 40,
-              markerHeight: 40,
-            });
-
-            map.on('click', 'clusters', function (e) {
-              var features = map.queryRenderedFeatures(e.point, {
-                layers: ['clusters']
-              });
-
-              if (features.length) {
-                var clusterId = features[0].properties.cluster_id;
-                map.getSource('data').getClusterLeaves(clusterId, 100, 0, function (err, aFeatures) {
-                  if (err) {
-                    return;
-                  }
-                  spiderifier.spiderfy(e.point, aFeatures);
-                });
-              }
-            });
-
-            map.on('click', function () {
-              spiderifier.unspiderfy();
-            });
-
-            map.on('mousemove', 'clusters', function (e) {
-              map.getCanvas().style.cursor = 'pointer';
-            });
-
-            map.on('mouseleave', 'clusters', function () {
-              map.getCanvas().style.cursor = '';
             });
           }
         });
