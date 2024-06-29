@@ -11,7 +11,6 @@
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <style>
-
     body {
       margin: 0;
       padding: 0;
@@ -164,16 +163,16 @@
       satellite: 'mapbox://styles/oohalakkadi/clxx2ho7n00yu01po22a4211w'
     };
 
+    var currentZoom = map.getZoom();  // Store initial zoom level
 
-    for (const input of inputs) {
-        const layerId = layer.target.id;
-        const currentZoom = map.getZoom();
-        const currentCenter = map.getCenter();
-        map.setStyle(basemaps[layerId]);
+    document.getElementById('basemap-menu').addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        var activeLinks = document.querySelectorAll('#basemap-menu a.active');
+        activeLinks.forEach(function (link) {
+          link.classList.remove('active');
+        });
 
-        map.on('style.load', function () {
-          map.setCenter(currentCenter);
-          map.setZoom(currentZoom);
+        var styleId = e.target.id;
         var currentCenter = map.getCenter();  // Get current center
 
         map.setStyle(basemaps[styleId]);
