@@ -71,7 +71,7 @@
       border-bottom-color: rgb(61, 59, 59);
     }
 
-    #menu,
+    #format-menu,
     #basemap-menu {
       background: #fff;
       position: absolute;
@@ -82,7 +82,7 @@
       font-family: 'Helvetica Neue', sans-serif;
     }
 
-    #menu {
+    #format-menu {
       top: 10px;
       right: 10px;
     }
@@ -92,7 +92,7 @@
       left: 10px;
     }
 
-    #menu a,
+    #format-menu a,
     #basemap-menu a {
       font-size: 13px;
       color: #404040;
@@ -104,24 +104,24 @@
       text-align: center;
     }
 
-    #menu a:last-child,
+    #format-menu a:last-child,
     #basemap-menu a:last-child {
       border: none;
     }
 
-    #menu a:hover,
+    #format-menu a:hover,
     #basemap-menu a:hover {
       background-color: #f8f8f8;
       color: #404040;
     }
 
-    #menu a.active,
+    #format-menu a.active,
     #basemap-menu a.active {
       background-color: #ffe7c1;
       color: #000000;
     }
 
-    #menu a.active:hover,
+    #format-menu a.active:hover,
     #basemap-menu a.active:hover {
       background: #ffd89a;
     }
@@ -129,13 +129,18 @@
 </head>
 
 <body>
-  <nav id="menu"></nav>
-  <nav id="basemap-menu">
-    <a href="#" class="active" id="light">Light</a>
-    <a href="#" id="dark">Dark</a>
-    <a href="#" id="satellite">Satellite</a>
-  </nav>
+  <nav id="format-menu"></nav>
+
   <div id='map'></div>
+
+  <div id="basemap-menu">
+    <input id="clxwvv3g6004401om6yr48l3d" type="radio" name="rtoggle" value="light" checked="checked">
+    <label for="clxwvv3g6004401om6yr48l3d">light</label>
+    <input id="clxx2ggsp004f01rh1ked0p5e" type="radio" name="rtoggle" value="dark">
+    <label for="clxx2ggsp004f01rh1ked0p5e">dark</label>
+    <input id="clxx2ho7n00yu01po22a4211w" type="radio" name="rtoggle" value="satellite">
+    <label for="clxx2ho7n00yu01po22a4211w">satellite</label>
+  </div>
   <script>
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
@@ -160,37 +165,41 @@
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
     map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
 
-    var basemaps = {
-      light: 'mapbox://styles/oohalakkadi/clxwvv3g6004401om6yr48l3d',
-      dark: 'mapbox://styles/oohalakkadi/clxx2ggsp004f01rh1ked0p5e',
-      satellite: 'mapbox://styles/oohalakkadi/clxx2ho7n00yu01po22a4211w'
-    };
+    const layerList = document.getElementById('basemap-menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+        input.onclick = (layer) => {
+            const layerId = layer.target.id;
+            map.setStyle('mapbox://styles/oohalakkadi/' + layerId);
+        };
+    }
 
     var currentZoom = map.getZoom();  // Store initial zoom level
 
-    document.getElementById('basemap-menu').addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        var activeLinks = document.querySelectorAll('#basemap-menu a.active');
-        activeLinks.forEach(function (link) {
-          link.classList.remove('active');
-        });
+    // document.getElementById('basemap-menu').addEventListener('click', function (e) {
+    //   if (e.target.tagName === 'A') {
+    //     var activeLinks = document.querySelectorAll('#basemap-menu a.active');
+    //     activeLinks.forEach(function (link) {
+    //       link.classList.remove('active');
+    //     });
 
-        var styleId = e.target.id;
-        var currentCenter = map.getCenter();  // Get current center
+    //     var styleId = e.target.id;
+    //     var currentCenter = map.getCenter();  // Get current center
 
-        map.setStyle(basemaps[styleId]);
+    //     map.setStyle(basemaps[styleId]);
 
-        map.on('style.load', function () {    // After style is loaded
-          map.setCenter(currentCenter);       // Set center back
-          map.setZoom(currentZoom);           // Set zoom back
-        });
+    //     map.on('style.load', function () {    // After style is loaded
+    //       map.setCenter(currentCenter);       // Set center back
+    //       map.setZoom(currentZoom);           // Set zoom back
+    //     });
 
-        currentZoom = map.getZoom();
-        e.target.classList.add('active');
-      }
-    });
+    //     currentZoom = map.getZoom();
+    //     e.target.classList.add('active');
+    //   }
+    // });
 
-    const symbolLayers = ['reports', 'photos', 'videos', 'journalism', 'social media'];
+    // const symbolLayers = ['reports', 'photos', 'videos', 'journalism', 'social media'];
     const filters = {
       'reports': ['==', 'Format', 'Report'],
       'photos': ['==', 'Format', 'Photo'],
@@ -409,7 +418,7 @@
             updateClusterData();
           };
 
-          const layers = document.getElementById('menu');
+          const layers = document.getElementById('format-menu');
           layers.appendChild(link);
         }
       });
