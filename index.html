@@ -307,6 +307,16 @@
                   .addTo(map);
               });
 
+              map.on('click', 'clusters', function (e) {
+                const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+                const clusterId = features[0].properties.cluster_id;
+
+                const children = supercluster.getChildren(clusterId);
+                // Do something with the children, e.g., display them on the map or in a popup
+                console.log(children);
+              });
+
+
               map.on('mouseenter', layerId, function () {
                 map.getCanvas().style.cursor = 'pointer';
               });
