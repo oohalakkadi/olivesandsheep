@@ -234,12 +234,14 @@
             if (!map.getSource('data')) {
               addLayers(data);
             }
+            print('its the conditional');
           });
 
           map.on('styledata', function () {
             if (!map.getSource('data')) {
               addLayers(data);
             }
+            print('its the conditional');
           });
 
           function addLayers(data) {
