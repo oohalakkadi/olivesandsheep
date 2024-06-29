@@ -10,6 +10,7 @@
   <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+  <script src="https://unpkg.com/supercluster@7.1.0/dist/supercluster.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -186,6 +187,7 @@
     };
 
     let originalData; // Variable to store original GeoJSON data
+    let supercluster; // Variable to store Supercluster instance
 
     $(document).ready(function () {
       $.ajax({
@@ -204,6 +206,13 @@
           delimiter: ','
         }, function (err, data) {
           originalData = data; // Store original data
+
+          // Initialize Supercluster
+          supercluster = new Supercluster({
+            radius: 40,
+            maxZoom: 16
+          }).load(data.features);
+
           map.on('load', function () {
             addLayers(data);
           });
@@ -216,7 +225,10 @@
             // Add GeoJSON source with clustering
             map.addSource('data', {
               type: 'geojson',
-              data: data,
+              data: {
+                type: 'FeatureCollection',
+                features: supercluster.getClusters([-180, -85, 180, 85], map.getZoom())
+              },
               cluster: true,
               clusterMaxZoom: 14,
               clusterRadius: 50
@@ -287,7 +299,6 @@
               });
             });
 
-
             function addLayerFunctionality(layerId) {
               map.on('click', layerId, function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
@@ -312,10 +323,15 @@
                 const clusterId = features[0].properties.cluster_id;
 
                 const children = supercluster.getChildren(clusterId);
-                // Do something with the children, e.g., display them on the map or in a popup
                 console.log(children);
-              });
 
+                let clusterChildrenGeoJSON = {
+                  type: "FeatureCollection",
+                  features: children
+                };
+
+                map.getSource('data').setData(clusterChildrenGeoJSON);
+              });
 
               map.on('mouseenter', layerId, function () {
                 map.getCanvas().style.cursor = 'pointer';
@@ -345,9 +361,11 @@
           });
         });
 
+        supercluster.load(filteredFeatures);
+
         let updatedData = {
-          ...originalData,
-          features: filteredFeatures
+          type: "FeatureCollection",
+          features: supercluster.getClusters([-180, -85, 180, 85], map.getZoom())
         };
 
         map.getSource('data').setData(updatedData);
@@ -390,7 +408,6 @@
         }
       });
     });
-
   </script>
 </body>
 
