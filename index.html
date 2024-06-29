@@ -231,11 +231,15 @@
           delimiter: ','
         }, function (err, data) {
           map.on('load', function () {
-            addLayers(data);
+            if (!map.getSource('data')) {
+              addLayers(data);
+            }
           });
 
           map.on('styledata', function () {
-            addLayers(data);
+            if (!map.getSource('data')) {
+              addLayers(data);
+            }
           });
 
           function addLayers(data) {
