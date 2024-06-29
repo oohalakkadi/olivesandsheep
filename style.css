@@ -22,7 +22,7 @@ body {
   }
   
   .mapboxgl-popup-content {
-    font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    font: 400 15px/22px 'Poppins', 'Poppins', Sans-serif;
     padding: 0;
     width: 250px;
   }
@@ -75,7 +75,7 @@ body {
     background: rgba(23, 0, 40, 0.75);
     position: absolute;
     z-index: 2;
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Poppins', sans-serif;
     bottom: 30px;
     right: 55px;
     padding: 5px;
@@ -87,7 +87,7 @@ body {
   /* #olives-and-sheep-menu a, */
   #basemap-menu a {
     font-size: 13px;
-    color: #ffffff;
+    color: #e1e5f8;
     display: block;
     margin: 5;
     padding: 10px;
@@ -104,13 +104,13 @@ body {
   /* #olives-and-sheep-menu a:hover, */
   #basemap-menu a:hover {
     background-color: rgba(89, 0, 136, 0.75);
-    color: #fdfdfd;
+    color: #e1e5f8;
   }
   
   /* #olives-and-sheep-menu a.active, */
   #basemap-menu a.active {
     background-color: rgba(115, 0, 176, 0.75);
-    color: #ffffff;
+    color: #e1e5f8;
   }
   
   /* #olives-and-sheep-menu a.active:hover, */
