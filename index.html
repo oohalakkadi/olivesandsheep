@@ -10,6 +10,8 @@
   <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+  <script src='https://npmcdn.com/mapboxgl-spiderifier@latest/index.js'></script>
+  <link href='https://npmcdn.com/mapboxgl-spiderifier@latest/index.css' rel='stylesheet' />
   <style>
     body {
       margin: 0;
@@ -321,6 +323,22 @@
 
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
+            });
+
+            var spiderifier = new MapboxglSpiderifier(map, {
+              markerWidth: 40,
+              markerHeight: 40,
+              onClick: function (e, spiderLeg) {
+                console.log('Clicked on ', spiderLeg);
+              }
+            });
+
+            map.on('load', function () {
+              spiderifier.spiderfy([35.222470, 31.938833], data.features);
+            });
+
+            map.on('click', function () {
+              spiderifier.unspiderfy();
             });
           }
         });
