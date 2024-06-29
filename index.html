@@ -9,7 +9,9 @@
   <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
-  <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+  <link rel="stylesheet" type="text/css" href="../index.css">
+  <script type="text/javascript" src="../index.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -202,21 +204,21 @@
           latfield: 'Latitude',
           lonfield: 'Longitude',
           delimiter: ','
-        }, function (err, data) {
-          originalData = data; // Store original data
+        }, function (err, oasData) {
+          originalData = oasData; // Store original data
           map.on('load', function () {
-            addLayers(data);
+            addLayers(oasData);
           });
 
           map.on('styledata', function () {
-            addLayers(data);
+            addLayers(oasData);
           });
 
-          function addLayers(data) {
+          function addLayers(oasData) {
             // Add GeoJSON source with clustering
-            map.addSource('data', {
+            map.addSource('oasData', {
               type: 'geojson',
-              data: data,
+              data: oasData,
               cluster: true,
               clusterMaxZoom: 14,
               clusterRadius: 50
@@ -226,7 +228,7 @@
             map.addLayer({
               id: 'clusters',
               type: 'circle',
-              source: 'data',
+              source: 'oasData',
               filter: ['has', 'point_count'],
               paint: {
                 'circle-color': [
@@ -254,7 +256,7 @@
             map.addLayer({
               id: 'cluster-count',
               type: 'symbol',
-              source: 'data',
+              source: 'oasData',
               filter: ['has', 'point_count'],
               layout: {
                 'text-field': '{point_count_abbreviated}',
@@ -268,7 +270,7 @@
               map.addLayer({
                 id: layerId,
                 type: 'symbol',
-                source: 'data',
+                source: 'oasData',
                 filter: filters[layerId],
                 layout: {
                   'icon-image': layerId === 'reports' ? 'library' :
@@ -294,7 +296,7 @@
                   layers: ['clusters']
                 });
                 const clusterId = features[0].properties.cluster_id;
-                map.getSource('data').getClusterExpansionZoom(
+                map.getSource('oasData').getClusterExpansionZoom(
                   clusterId,
                   (err, zoom) => {
                     if (err) return;
@@ -332,7 +334,7 @@
                 map.getCanvas().style.cursor = '';
               });
 
-              var bbox = turf.bbox(data);
+              var bbox = turf.bbox(oasData);
               map.fitBounds(bbox, { padding: 50 });
             }
 
@@ -357,7 +359,7 @@
           features: filteredFeatures
         };
 
-        map.getSource('data').setData(updatedData);
+        map.getSource('oasData').setData(updatedData);
       }
 
       map.on('idle', () => {
