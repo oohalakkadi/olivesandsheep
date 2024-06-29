@@ -163,6 +163,8 @@
       satellite: 'mapbox://styles/oohalakkadi/clxx2ho7n00yu01po22a4211w'
     };
 
+    var currentZoom = map.getZoom();  // Store initial zoom level
+
     document.getElementById('basemap-menu').addEventListener('click', function (e) {
       if (e.target.tagName === 'A') {
         var activeLinks = document.querySelectorAll('#basemap-menu a.active');
@@ -171,7 +173,16 @@
         });
 
         var styleId = e.target.id;
+        var currentCenter = map.getCenter();  // Get current center
+
         map.setStyle(basemaps[styleId]);
+
+        map.on('style.load', function () {    // After style is loaded
+          map.setCenter(currentCenter);       // Set center back
+          map.setZoom(currentZoom);           // Set zoom back
+        });
+
+        currentZoom = map.getZoom();
         e.target.classList.add('active');
       }
     });
