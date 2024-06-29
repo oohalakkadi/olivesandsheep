@@ -11,6 +11,7 @@
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <style>
+
     body {
       margin: 0;
       padding: 0;
@@ -71,31 +72,21 @@
       border-bottom-color: rgb(61, 59, 59);
     }
 
-    #menu,
-    #basemap-menu {
-      background: #fff;
+    #menu {
+      background: rgba(23, 0, 40, 0.75);
       position: absolute;
       z-index: 1;
       border-radius: 3px;
       width: 120px;
-      border: 1px solid rgba(0, 0, 0, 0.4);
       font-family: 'Helvetica Neue', sans-serif;
-    }
-
-    #menu {
       top: 10px;
       right: 10px;
+      padding: 5px;
     }
 
-    #basemap-menu {
-      top: 10px;
-      left: 10px;
-    }
-
-    #menu a,
-    #basemap-menu a {
-      font-size: 13px;
-      color: #404040;
+    #menu a {
+      font-size: 12px;
+      color: white;
       display: block;
       margin: 0;
       padding: 10px;
@@ -104,38 +95,67 @@
       text-align: center;
     }
 
-    #menu a:last-child,
-    #basemap-menu a:last-child {
+    #menu a:last-child {
       border: none;
     }
 
-    #menu a:hover,
-    #basemap-menu a:hover {
-      background-color: #f8f8f8;
-      color: #404040;
+    #menu a:hover {
+      background-color: #3600747d;
+      color: #ffffff;
     }
 
-    #menu a.active,
-    #basemap-menu a.active {
-      background-color: #ffe7c1;
-      color: #000000;
+    #menu a.active {
+      background-color: #6304d17d;
+      color: #ffffff;
     }
 
-    #menu a.active:hover,
-    #basemap-menu a.active:hover {
-      background: #ffd89a;
+    #menu a.active:hover {
+      background: #3600747d;
     }
+
+    #basemap-menu {
+      background: rgba(23, 0, 40, 0.75);
+      position: absolute;
+      z-index: 1;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      font-family: 'Helvetica Neue', sans-serif;
+      bottom: 40px;
+      right: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      width: 240px;
+    }
+
+    #basemap-menu label {
+      color: white;
+      margin-right: 10px;
+      font-size: 12px;
+    }
+
   </style>
 </head>
 
 <body>
-  <nav id="menu"></nav>
-  <nav id="basemap-menu">
-    <a href="#" class="active" id="light">Light</a>
-    <a href="#" id="dark">Dark</a>
-    <a href="#" id="satellite">Satellite</a>
-  </nav>
   <div id='map'></div>
+  <nav id="menu">
+    <!-- Your other menu content -->
+    <a href="#" class="active" id="reports">Reports</a>
+    <a href="#" id="photos">Photos</a>
+    <a href="#" id="videos">Videos</a>
+    <a href="#" id="journalism">Journalism</a>
+    <a href="#" id="social media">Social Media</a>
+  </nav>
+  <div id="basemap-menu">
+    <input id="light" type="radio" name="rtoggle" value="light" checked="checked">
+    <label for="light">Light</label>
+    <input id="dark" type="radio" name="rtoggle" value="dark">
+    <label for="dark">Dark</label>
+    <input id="satellite" type="radio" name="rtoggle" value="satellite">
+    <label for="satellite">Satellite</label>
+  </div>
   <script>
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
@@ -163,29 +183,22 @@
       satellite: 'mapbox://styles/oohalakkadi/clxx2ho7n00yu01po22a4211w'
     };
 
-    var currentZoom = map.getZoom();  // Store initial zoom level
+    const layerList = document.getElementById('basemap-menu');
+    const inputs = layerList.getElementsByTagName('input');
 
-    document.getElementById('basemap-menu').addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        var activeLinks = document.querySelectorAll('#basemap-menu a.active');
-        activeLinks.forEach(function (link) {
-          link.classList.remove('active');
+    for (const input of inputs) {
+      input.onclick = (layer) => {
+        const layerId = layer.target.id;
+        const currentZoom = map.getZoom();
+        const currentCenter = map.getCenter();
+        map.setStyle(basemaps[layerId]);
+
+        map.on('style.load', function () {
+          map.setCenter(currentCenter);
+          map.setZoom(currentZoom);
         });
-
-        var styleId = e.target.id;
-        var currentCenter = map.getCenter();  // Get current center
-
-        map.setStyle(basemaps[styleId]);
-
-        map.on('style.load', function () {    // After style is loaded
-          map.setCenter(currentCenter);       // Set center back
-          map.setZoom(currentZoom);           // Set zoom back
-        });
-
-        currentZoom = map.getZoom();
-        e.target.classList.add('active');
-      }
-    });
+      };
+    }
 
     const symbolLayers = ['reports', 'photos', 'videos', 'journalism', 'social media'];
     const filters = {
@@ -300,7 +313,6 @@
                 }
               });
             });
-
 
             function addLayerFunctionality(layerId) {
               map.on('click', 'clusters', (e) => {
