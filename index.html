@@ -185,6 +185,35 @@
       'social media': ['==', 'Format', 'Social Media']
     };
 
+    function updateClusterSource() {
+      const visibleLayers = symbolLayers.filter(layerId => {
+        return map.getLayoutProperty(layerId, 'visibility') === 'visible';
+      });
+
+      const filterConditions = visibleLayers.map(layerId => filters[layerId]);
+
+      if (filterConditions.length === 0) {
+        map.getSource('data').setData({
+          type: 'FeatureCollection',
+          features: []
+        });
+        return;
+      }
+
+      const combinedFilter = ['any', ...filterConditions];
+
+      const filteredFeatures = map.querySourceFeatures('data', {
+        filter: combinedFilter
+      });
+
+      const filteredData = {
+        type: 'FeatureCollection',
+        features: filteredFeatures.map(f => f.toJSON())
+      };
+
+      map.getSource('data').setData(filteredData);
+    }
+
     $(document).ready(function () {
       $.ajax({
         type: "GET",
@@ -333,6 +362,7 @@
             ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
               addLayerFunctionality(layerId);
             });
+            updateClusterSource();
           }
         });
       }
@@ -366,6 +396,7 @@
             this.className = 'active';
             map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
           }
+          updateClusterSource();
         };
 
         const layers = document.getElementById('menu');
