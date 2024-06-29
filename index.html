@@ -202,13 +202,12 @@
       }
     });
 
-    const symbolLayers = ['reports', 'photos', 'videos', 'journalism', 'social media'];
+    const symbolLayers = ['Written Works', 'Photography', 'Social Media', 'Vendors'];
     const filters = {
-      'reports': ['==', 'Format', 'Report'],
-      'photos': ['==', 'Format', 'Photo'],
-      'videos': ['==', 'Format', 'Video'],
-      'journalism': ['==', 'Format', 'Journalism'],
-      'social media': ['==', 'Format', 'Social Media']
+      'Written Works': ['==', 'Format', 'Written Works'],
+      'Photography': ['==', 'Format', 'Photography'],
+      'Social Media': ['==', 'Format', 'Social Media'],
+      'Vendors': ['==', 'Format', 'Vendors']
     };
 
     let originalData; // Variable to store original GeoJSON data
@@ -300,10 +299,9 @@
                 source: 'data',
                 filter: filters[layerId],
                 layout: {
-                  'icon-image': layerId === 'reports' ? 'library' :
-                    layerId === 'photos' ? 'attraction' :
-                      layerId === 'videos' ? 'cinema' :
-                        layerId === 'journalism' ? 'historic' : 'mobile-phone',
+                  'icon-image': layerId === 'Written Works' ? 'WrittenWorks' :
+                    layerId === 'Photography' ? 'Photography' :
+                      layerId === 'Social Media' ? 'SocialMedia' : 'Vendors',
                   'icon-size': 2,
                   'icon-allow-overlap': true,
                   'icon-ignore-placement': true,
@@ -365,7 +363,7 @@
               map.fitBounds(bbox, { padding: 50 });
             }
 
-            ['reports', 'photos', 'journalism', 'social media', 'videos'].forEach(layerId => {
+            ['Written Works', 'Photography', 'Social Media', 'Vendors'].forEach(layerId => {
               addLayerFunctionality(layerId);
             });
           }
@@ -390,7 +388,7 @@
       }
 
       map.on('idle', () => {
-        const toggleableLayerIds = ['reports', 'photos', 'journalism', 'social media', 'videos'];
+        const toggleableLayerIds = ['Written Works', 'Photography', 'Social Media', 'Vendors'];
 
         for (const id of toggleableLayerIds) {
           if (document.getElementById(id)) {
