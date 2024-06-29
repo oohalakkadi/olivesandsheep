@@ -260,20 +260,6 @@
               }
             });
 
-            // Add unclustered points layer
-            map.addLayer({
-              id: 'unclustered-point',
-              type: 'circle',
-              source: 'data',
-              filter: ['!', ['has', 'point_count']],
-              paint: {
-                'circle-color': '#11b4da',
-                'circle-radius': 4,
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
-              }
-            });
-
             // Add other layers with filters
             symbolLayers.forEach(layerId => {
               map.addLayer({
@@ -357,20 +343,44 @@
           e.preventDefault();
           e.stopPropagation();
 
-          const visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-
-          if (visibility === 'visible') {
-            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+          if (map.getLayer(clickedLayer)) {
+            map.removeLayer(clickedLayer);
+            map.removeSource(clickedLayer);
             this.className = '';
           } else {
+            addLayer(clickedLayer);
             this.className = 'active';
-            map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
           }
         };
+
 
         const layers = document.getElementById('menu');
         layers.appendChild(link);
       }
+
+      function addLayer(layerId) {
+        map.addLayer({
+          id: layerId,
+          type: 'symbol',
+          source: 'data',
+          filter: filters[layerId],
+          layout: {
+            'icon-image': layerId === 'reports' ? 'library' :
+              layerId === 'photos' ? 'attraction' :
+                layerId === 'videos' ? 'cinema' :
+                  layerId === 'journalism' ? 'historic' : 'mobile-phone',
+            'icon-size': 2,
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
+            'text-allow-overlap': true,
+            'text-ignore-placement': true
+          },
+          paint: {
+            'icon-color': "white"
+          }
+        });
+      }
+
     });
   </script>
 </body>
