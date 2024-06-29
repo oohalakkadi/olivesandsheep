@@ -230,29 +230,32 @@
           lonfield: 'Longitude',
           delimiter: ','
         }, function (err, data) {
+          // Add the GeoJSON data to the map on 'load' event
           map.on('load', function () {
-            if (!map.getSource('data')) {
-              addLayers(data);
-            }
-            print('its the conditional');
+            addLayers(data);
           });
 
+          // Add the GeoJSON data to the map on 'styledata' event
           map.on('styledata', function () {
-            if (!map.getSource('data')) {
-              addLayers(data);
-            }
-            print('its the conditional');
+            addLayers(data);
           });
 
           function addLayers(data) {
-            // Add GeoJSON source with clustering
-            map.addSource('data', {
-              type: 'geojson',
-              data: data,
-              cluster: true,
-              clusterMaxZoom: 14,
-              clusterRadius: 50
-            });
+            try {
+              // Add GeoJSON source with clustering
+              map.addSource('data', {
+                type: 'geojson',
+                data: data,
+                cluster: true,
+                clusterMaxZoom: 14,
+                clusterRadius: 50
+              });
+            } catch (e) {
+              // If the source already exists, ignore the error
+              if (e.message !== 'There is already a source with this ID.') {
+                throw e;
+              }
+            }
 
             // Add clustered layer
             map.addLayer({
