@@ -289,6 +289,23 @@
 
 
             function addLayerFunctionality(layerId) {
+              map.on('click', 'clusters', (e) => {
+                const features = map.queryRenderedFeatures(e.point, {
+                  layers: ['clusters']
+                });
+                const clusterId = features[0].properties.cluster_id;
+                map.getSource('data').getClusterExpansionZoom(
+                  clusterId,
+                  (err, zoom) => {
+                    if (err) return;
+
+                    map.easeTo({
+                      center: features[0].geometry.coordinates,
+                      zoom: zoom
+                    });
+                  }
+                );
+              });
               map.on('click', layerId, function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = `
