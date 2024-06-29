@@ -155,7 +155,7 @@ var transformRequest = (url, resourceType) => {
                 'icon-image': layerId === 'Written Works' ? 'WrittenWorks' :
                   layerId === 'Photography' ? 'Photography' :
                     layerId === 'Social Media' ? 'SocialMedia' : 'Vendors',
-                'icon-size': 0.2,
+                'icon-size': 0.3,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'text-allow-overlap': true,
