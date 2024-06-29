@@ -208,10 +208,12 @@
           originalData = data; // Store original data
           map.on('load', function () {
             addLayers(data);
+            setupSpiderifier(); // Initialize spiderifier after layers are added
           });
 
           map.on('styledata', function () {
             addLayers(data);
+            setupSpiderifier(); // Initialize spiderifier after layers are added
           });
 
           function addLayers(data) {
@@ -360,6 +362,61 @@
         };
 
         map.getSource('data').setData(updatedData);
+      }
+
+      function setupSpiderifier() {
+        map.on('click', function (e) {
+          var features = map.queryRenderedFeatures(e.point, {
+            layers: symbolLayers.concat(['clusters'])
+          });
+
+          if (!features.length) {
+            return;
+          }
+
+          var feature = features[0];
+
+          if (feature.properties.cluster) {
+            // Cluster feature - zoom in
+            map.getSource('data').getClusterExpansionZoom(feature.properties.cluster_id, function (err, zoom) {
+              if (err) {
+                return;
+              }
+
+              map.easeTo({
+                center: feature.geometry.coordinates,
+                zoom: zoom
+              });
+            });
+          } else {
+            // Single point - spiderify
+            var spiderifier = new MapboxglSpiderifier(map, {
+              onClick: function (e, spiderLeg) {
+                var coordinates = spiderLeg.feature.geometry.coordinates.slice();
+                var description = `
+                  <h3>${spiderLeg.feature.properties.Name}</h3>
+                  <h4><em>${spiderLeg.feature.properties.Date}</em></h4>
+                  <h4><b>${spiderLeg.feature.properties.Address}</b></h4>
+                  <h4>${spiderLeg.feature.properties.About}</h4>
+                  <h4><a href='${spiderLeg.feature.properties.Link}'>${spiderLeg.feature.properties.Hyperlink}</a></h4>
+                `;
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+                new mapboxgl.Popup()
+                  .setLngLat(coordinates)
+                  .setHTML(description)
+                  .addTo(map);
+              },
+              initializeLeg: function (spiderLeg) {
+                // customize the appearance of spiderified points
+                spiderLeg.mapboxMarker.getElement().classList.add('spider-leg-marker');
+              }
+            });
+
+            spiderifier.spiderfy(e.point, features);
+          }
+        });
       }
 
       map.on('idle', () => {
