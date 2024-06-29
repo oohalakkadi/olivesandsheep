@@ -1,0 +1,120 @@
+/* style.css */
+
+/* General styles */
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .mapboxgl-popup {
+    padding-bottom: 5px;
+  }
+  
+  .mapboxgl-popup-close-button {
+    display: none;
+  }
+  
+  .mapboxgl-popup-content {
+    font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    padding: 0;
+    width: 250px;
+  }
+  
+  .mapboxgl-popup-content-wrapper {
+    padding: 1%;
+  }
+  
+  .mapboxgl-popup-content h3 {
+    background: rgb(61, 59, 59);
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    display: block;
+    padding: 15px;
+    font-weight: 700;
+    margin-top: -5px;
+  }
+  
+  .mapboxgl-popup-content h4 {
+    margin: 0;
+    display: block;
+    padding: 10px 3px 10px 10px;
+    font-weight: 400;
+  }
+  
+  .mapboxgl-container {
+    cursor: pointer;
+  }
+  
+  .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
+    margin-top: 3px;
+  }
+  
+  .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
+    border-bottom-color: rgb(61, 59, 59);
+  }
+  
+  #olives-and-sheep-menu {
+    background: rgba(23, 0, 40, 0.75);
+    position: absolute;
+    z-index: 1;
+    width: 120px;
+    font-family: 'Helvetica Neue', sans-serif;
+    top: 10px;
+    right: 10px;
+  }
+  
+  #basemap-menu {
+    background: rgba(23, 0, 40, 0.75);
+    position: absolute;
+    z-index: 1;
+    font-family: 'Helvetica Neue', sans-serif;
+    bottom: 30px;
+    right: 55px;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  #olives-and-sheep-menu a,
+  #basemap-menu a {
+    font-size: 13px;
+    color: #ffffff;
+    display: block;
+    margin: 5;
+    padding: 10px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    text-align: center;
+  }
+  
+  #olives-and-sheep-menu a:last-child,
+  #basemap-menu a:last-child {
+    border: none;
+  }
+  
+  #olives-and-sheep-menu a:hover,
+  #basemap-menu a:hover {
+    background-color: rgba(89, 0, 136, 0.75);
+    color: #fdfdfd;
+  }
+  
+  #olives-and-sheep-menu a.active,
+  #basemap-menu a.active {
+    background-color: rgba(115, 0, 176, 0.75);
+    color: #ffffff;
+  }
+  
+  #olives-and-sheep-menu a.active:hover,
+  #basemap-menu a.active:hover {
+    background: rgba(89, 0, 136, 0.75);
+  }
+  
