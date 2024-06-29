@@ -71,7 +71,7 @@
       border-bottom-color: rgb(61, 59, 59);
     }
 
-    #olives-and-sheep {
+    #olives-and-sheep-menu {
       background: rgba(23, 0, 40, 0.75);
       position: absolute;
       z-index: 1;
@@ -94,7 +94,7 @@
       justify-content: space-around;
     }
 
-    #olives-and-sheep a {
+    #olives-and-sheep-menu a {
       font-size: 13px;
       color: #ffffff;
       display: block;
@@ -116,24 +116,24 @@
       text-align: center;
     }
 
-    #olives-and-sheep a:last-child,
+    #olives-and-sheep-menu a:last-child,
     #basemap-menu a:last-child {
       border: none;
     }
 
-    #olives-and-sheep a:hover,
+    #olives-and-sheep-menu a:hover,
     #basemap-menu a:hover {
       background-color: rgba(89, 0, 136, 0.75);
       color: #fdfdfd;
     }
 
-    #olives-and-sheep a.active,
+    #olives-and-sheep-menu a.active,
     #basemap-menu a.active {
       background-color: rgba(115, 0, 176, 0.75);
       color: #ffffff;
     }
 
-    #olives-and-sheep a.active:hover,
+    #olives-and-sheep-menu a.active:hover,
     #basemap-menu a.active:hover {
       background: rgba(89, 0, 136, 0.75);
     }
@@ -141,7 +141,7 @@
 </head>
 
 <body>
-  <nav id="olives-and-sheep"></nav>
+  <nav id="olives-and-sheep-menu"></nav>
   <nav id="basemap-menu">
     <a href="#" class="active" id="light">Light</a>
     <a href="#" id="dark">Dark</a>
@@ -419,7 +419,7 @@
             updateClusterData();
           };
 
-          const layers = document.getElementById('olives-and-sheep');
+          const layers = document.getElementById('olives-and-sheep-menu');
           layers.appendChild(link);
         }
       });
