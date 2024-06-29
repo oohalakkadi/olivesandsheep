@@ -301,7 +301,7 @@
               });
             });
 
-            function distributePointsEquidistantly(geojson, radius) {
+            function distributePointsEquidistantly(geojson, baseRadius, zoomLevel) {
               const grouped = {};
 
               // Group points by location
@@ -323,6 +323,7 @@
                   newFeatures.push(group[0]);
                 } else {
                   const angleIncrement = (2 * Math.PI) / group.length;
+                  const radius = baseRadius / Math.pow(2, 15 - zoomLevel); // Adjust radius based on zoom level
 
                   group.forEach((feature, index) => {
                     const [lng, lat] = feature.geometry.coordinates;
@@ -356,10 +357,39 @@
               return { ...geojson, features: newFeatures };
             }
 
-            const radius = 0.0001; // Adjust as necessary
-            const distributedGeojsonData = distributePointsEquidistantly(data, radius);
+            const baseRadius = 0.0001; // Base radius for distribution
+            let zoomLevel = map.getZoom();
 
-            map.getSource('data').setData(distributedGeojsonData);
+            function updateDistributedData() {
+              zoomLevel = map.getZoom();
+              const distributedGeojsonData = distributePointsEquidistantly(data, baseRadius, zoomLevel);
+              map.getSource('data').setData(distributedGeojsonData);
+
+              // Update line features
+              const lineFeatures = distributedGeojsonData.features
+                .filter(feature => feature.properties.originalCoordinates)
+                .map(feature => ({
+                  type: 'Feature',
+                  geometry: {
+                    type: 'LineString',
+                    coordinates: [
+                      feature.properties.originalCoordinates,
+                      feature.geometry.coordinates
+                    ]
+                  }
+                }));
+
+              map.getSource('lines').setData({
+                type: 'FeatureCollection',
+                features: lineFeatures
+              });
+            }
+
+            // Initial data distribution
+            updateDistributedData();
+
+            // Update on zoom change
+            map.on('zoomend', updateDistributedData);
 
             // Add central points layer
             map.addLayer({
@@ -374,24 +404,11 @@
             });
 
             // Add lines connecting points to the center
-            const lineFeatures = distributedGeojsonData.features
-              .filter(feature => feature.properties.originalCoordinates)
-              .map(feature => ({
-                type: 'Feature',
-                geometry: {
-                  type: 'LineString',
-                  coordinates: [
-                    feature.properties.originalCoordinates,
-                    feature.geometry.coordinates
-                  ]
-                }
-              }));
-
             map.addSource('lines', {
               type: 'geojson',
               data: {
                 type: 'FeatureCollection',
-                features: lineFeatures
+                features: []
               }
             });
 
