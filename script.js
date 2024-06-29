@@ -55,12 +55,12 @@ var transformRequest = (url, resourceType) => {
     }
   });
   
-  const symbolLayers = ['Written Works', 'Photography', 'Social Media', 'Vendors'];
+  const symbolLayers = ['written-works', 'photography', 'social-media', 'vendors'];
   const filters = {
-    'Written Works': ['==', 'Format', 'Written Works'],
-    'Photography': ['==', 'Format', 'Photography'],
-    'Social Media': ['==', 'Format', 'Social Media'],
-    'Vendors': ['==', 'Format', 'Vendors']
+    'written-works': ['==', 'Format', 'Written Works'],
+    'photography': ['==', 'Format', 'Photography'],
+    'social-media': ['==', 'Format', 'Social Media'],
+    'vendors': ['==', 'Format', 'Vendors']
   };
   
   let originalData; // Variable to store original GeoJSON data
@@ -152,9 +152,9 @@ var transformRequest = (url, resourceType) => {
               source: 'data',
               filter: filters[layerId],
               layout: {
-                'icon-image': layerId === 'Written Works' ? 'WrittenWorks' :
-                  layerId === 'Photography' ? 'Photography' :
-                    layerId === 'Social Media' ? 'SocialMedia' : 'Vendors',
+                'icon-image': layerId === 'written-works' ? 'WrittenWorks' :
+                  layerId === 'photography' ? 'Photography' :
+                    layerId === 'social-media' ? 'SocialMedia' : 'Vendors',
                 'icon-size': 0.3,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
@@ -216,7 +216,7 @@ var transformRequest = (url, resourceType) => {
             map.fitBounds(bbox, { padding: 50 });
           }
   
-          ['Written Works', 'Photography', 'Social Media', 'Vendors'].forEach(layerId => {
+          ['written-works', 'photography', 'social-media', 'vendors'].forEach(layerId => {
             addLayerFunctionality(layerId);
           });
         }
@@ -224,57 +224,43 @@ var transformRequest = (url, resourceType) => {
     }
   
     function updateClusterData() {
-      let filteredFeatures = originalData.features.filter(feature => {
-        let format = feature.properties.Format;
-        return !symbolLayers.some(layerId => {
-          const visibility = map.getLayoutProperty(layerId, 'visibility');
-          return visibility === 'none' && filters[layerId][2] === format;
+        let filteredFeatures = originalData.features.filter(feature => {
+          let format = feature.properties.Format;
+          return !symbolLayers.some(layerId => {
+            const visibility = map.getLayoutProperty(layerId, 'visibility');
+            return visibility === 'none' && filters[layerId][2] === format;
+          });
         });
-      });
-  
-      let updatedData = {
-        ...originalData,
-        features: filteredFeatures
-      };
-  
-      map.getSource('data').setData(updatedData);
-    }
-  
-    map.on('idle', () => {
-      const toggleableLayerIds = ['Written Works', 'Photography', 'Social Media', 'Vendors'];
-  
-      for (const id of toggleableLayerIds) {
-        if (document.getElementById(id)) {
-          continue;
-        }
-  
-        const link = document.createElement('a');
-        link.id = id;
-        link.href = '#';
-        link.textContent = id;
-        link.className = 'active';
-  
-        link.onclick = function (e) {
-          const clickedLayer = this.textContent;
-          e.preventDefault();
-          e.stopPropagation();
-  
-          const visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-  
-          if (visibility === 'visible') {
-            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-            this.className = '';
-          } else {
-            this.className = 'active';
-            map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-          }
-  
-          updateClusterData();
+    
+        let updatedData = {
+          ...originalData,
+          features: filteredFeatures
         };
-  
-        const layers = document.getElementById('olives-and-sheep-menu');
-        layers.appendChild(link);
+    
+        map.getSource('data').setData(updatedData);
       }
+    
+      function handleCheckboxChange() {
+        const layerId = this.id;
+        const visibility = map.getLayoutProperty(layerId, 'visibility');
+        
+        if (this.checked) {
+          map.setLayoutProperty(layerId, 'visibility', 'visible');
+        } else {
+          map.setLayoutProperty(layerId, 'visibility', 'none');
+        }
+    
+        updateClusterData();
+      }
+    
+      map.on('idle', () => {
+        const toggleableLayerIds = ['written-works', 'photography', 'social-media', 'vendors'];
+    
+        for (const id of toggleableLayerIds) {
+          const checkbox = document.getElementById(id);
+          if (checkbox) {
+            checkbox.addEventListener('change', handleCheckboxChange);
+          }
+        }
+      });
     });
-  });
-  
