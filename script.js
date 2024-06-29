@@ -162,7 +162,7 @@ var transformRequest = (url, resourceType) => {
                 'text-ignore-placement': true
               },
               paint: {
-                'icon-color': "white"
+                'icon-color': '#412272'
               }
             });
           });
