@@ -119,4 +119,16 @@ body {
   #basemap-menu a.active:hover {
     background: rgba(89, 0, 136, 0.75);
   }
+
+  @media only screen and (max-width: 640px) {
+    /* Move basemap menu to the bottom right corner */
+    #basemap-menu {
+      bottom: 10px;
+      right: 10px;
+    }
   
+    /* Remove navigation and fullscreen controls */
+    .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl {
+      display: none;
+    }
+  }
