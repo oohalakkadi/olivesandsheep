@@ -32,7 +32,7 @@ $(document).ready(function () {
     }, function (err, oliveData) {
       originalData = oliveData; // Store original data
       map.on('load', function () {
-        addLayers(data);
+        addLayers(oliveData);
       });
 
       map.on('styledata', function () {
