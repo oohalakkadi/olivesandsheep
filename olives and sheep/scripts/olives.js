@@ -107,8 +107,8 @@ $(document).ready(function () {
                 layerId === 'reports' ? 'reports' :
                   layerId === 'photos' ? 'photos' :
                     layerId === 'videos' ? 'videos' :
-                    layerId === 'social-media' ? 'social-photo' :
-                      layerId === 'goods' ? 'goods' : '',
+                      layerId === 'social-media' ? 'social-photo' :
+                        layerId === 'goods' ? 'goods' : '',
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
@@ -200,17 +200,15 @@ $(document).ready(function () {
 
     updateClusterData();
   }
-  
+
   $('#toggle-olives-sheep').change(function () {
     const checked = this.checked;
     $('.olives-sheep-sub').each(function () {
       this.checked = checked;
-      map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+      $(this).trigger('change');  // Explicitly trigger the change event
     });
-    updateClusterData();
   });
 
-  // Event handler for sub-checkboxes
   $('.olives-sheep-sub').change(function () {
     const anyChecked = $('.olives-sheep-sub:checked').length > 0;
     $('#toggle-olives-sheep').prop('checked', anyChecked);
