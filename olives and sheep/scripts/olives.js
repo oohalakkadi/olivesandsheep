@@ -174,9 +174,9 @@ $(document).ready(function () {
   function updateClusterData() {
     let filteredFeatures = originalData.features.filter(feature => {
       let format = feature.properties.Format;
-      return !symbolLayers.some(layerId => {
+      return symbolLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
-        return visibility === 'none' && filters[layerId][2] === format;
+        return visibility === 'visible' && filters[layerId][2] === format;
       });
     });
 
@@ -200,7 +200,7 @@ $(document).ready(function () {
 
     updateClusterData();
   }
-  
+
   $('#toggle-olives-sheep').change(function () {
     const checked = this.checked;
     $('.olives-sheep-sub').each(function () {
