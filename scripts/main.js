@@ -54,7 +54,8 @@ document.getElementById('basemap-menu').addEventListener('click', function (e) {
   }
 });
 
-const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
+const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
+// const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
 const filters = {
   'articles': ['==', 'Format', 'Articles'],
   'reports': ['==', 'Format', 'Reports'],
@@ -161,9 +162,10 @@ $(document).ready(function () {
                 layerId === 'reports' ? 'reports' :
                   layerId === 'photos' ? 'photos' :
                     layerId === 'videos' ? 'videos' :
-                      layerId === 'social-photo' ? 'social-photo' :
-                        layerId === 'social-video' ? 'social-video' :
-                          layerId === 'social-text' ? 'social-text' :
+                    layerId === 'social-media' ? 'social-photo' :
+                      // layerId === 'social-photo' ? 'social-photo' :
+                        // layerId === 'social-video' ? 'social-video' :
+                        //   layerId === 'social-text' ? 'social-text' :
                             layerId === 'goods' ? 'goods' : '',
               'icon-size': 1.2,
               'icon-allow-overlap': true,

@@ -383,6 +383,9 @@
   height: 5px;
   transform: rotate(-45deg);
 }
+.layout .sidebar:not(.collapsed) .menu > ul > .menu-item.sub-menu > .sub-menu-list {
+  font-size: 0.8rem;
+}
 .layout .sidebar .menu .menu-item.sub-menu > .sub-menu-list {
   padding: 15px;
   display: none;
