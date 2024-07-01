@@ -1,4 +1,4 @@
-// olivesAndSheep.js
+// olives.js
 const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
 // const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
 const filters = {
