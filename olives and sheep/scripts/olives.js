@@ -200,16 +200,11 @@ $(document).ready(function () {
     updateClusterData();
   }
   
-
   $('#toggle-olives-sheep').change(function () {
     const checked = this.checked;
     $('.olives-sheep-sub').each(function () {
       this.checked = checked;
-      if (map.getLayer(this.id)) { // Check if layer exists
-        map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
-      } else {
-        console.warn(`Layer with ID ${this.id} does not exist.`);
-      }
+      map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
     });
     updateClusterData();
   });
