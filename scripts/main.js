@@ -61,9 +61,9 @@ const filters = {
   'photos': ['==', 'Format', 'Photos'],
   'videos': ['==', 'Format', 'Videos'],
   'social-media': ['==', 'Format', 'Social Media'],
-  'social-photo': [all[['==', 'Format', 'Social Media'], ['==', 'Social Media Format', 'Photo']]],
-  'social-video': [all[['==', 'Format', 'Social Media'], ['==', 'Social Media Format', 'Video']]],
-  'social-text': [all[['==', 'Format', 'Social Media'], ['==', 'Social Media Format', 'Text']]],
+  'social-photo': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Photo'],
+  'social-video': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Video'],
+  'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
   'goods': ['==', 'Format', 'Goods & Services']
 };
 
