@@ -295,7 +295,7 @@
   flex-direction: column;
   position: relative;
   background-color: #0c1e35;
-  z-index: 2;
+  z-index: 3;
 }
 
 .sidebar .sidebar-layout::-webkit-scrollbar-thumb {
@@ -303,11 +303,11 @@
 }
 
 .sidebar .sidebar-layout:hover::-webkit-scrollbar-thumb {
-  background-color: #421a73;
+  background-color: #421a7300;
 }
 
 .sidebar .sidebar-layout::-webkit-scrollbar {
-  width: 6px;
+  width: 0px;
 }
 
 .sidebar .sidebar-layout .sidebar-header {
@@ -545,13 +545,20 @@
   background-color: #efecf5;
 }
 
+.layout .sidebar>div.sidebar-layout>div>nav>ul>li:nth-child(2)>div {
+  top: 10px !important;
+}
+
+
 .layout .sidebar.collapsed .menu>ul>.menu-item.sub-menu>.sub-menu-list {
   transition: none !important;
   width: 200px;
   margin-left: 3px !important;
   border-radius: 4px;
   display: block !important;
+
 }
+
 
 .layout .sidebar.collapsed .menu>ul>.menu-item.active>a::after {
   background-color: #efecf5;
