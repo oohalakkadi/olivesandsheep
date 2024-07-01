@@ -151,7 +151,7 @@ var transformRequest = (url, resourceType) => {
               source: 'data',
               filter: filters[layerId],
               layout: {
-                'icon-image': layerId === 'articles' ? '../olives and sheep/markers/dark/social-photo.svg' :
+                'icon-image': layerId === 'articles' ? 'articles' :
                   layerId === 'photos' ? 'photos' :
                     layerId === 'social-media' ? 'socialmedia' :
                     layerId === 'goods' ? 'goods' : '',

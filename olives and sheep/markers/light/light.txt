@@ -1,3 +1,3 @@
-hex code: #936ECE
+hex code: #361861
 all markers sourced from remix icon
 not referenced in code directly -- imported into mapbox style spritesheet on mapbox studio
