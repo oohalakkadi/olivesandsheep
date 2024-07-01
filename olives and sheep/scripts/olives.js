@@ -46,7 +46,7 @@ $(document).ready(function () {
           clusterMaxZoom: 14,
           clusterRadius: 50
         });
-      
+
         // Add clustered layer
         map.addLayer({
           id: 'clusters',
@@ -75,7 +75,7 @@ $(document).ready(function () {
           }
         });
         console.log('Layer added: clusters'); // Log for clusters layer
-      
+
         // Add cluster count layer
         map.addLayer({
           id: 'cluster-count',
@@ -92,7 +92,7 @@ $(document).ready(function () {
           }
         });
         console.log('Layer added: cluster-count'); // Log for cluster-count layer
-      
+
         // Add other layers with filters
         symbolLayers.forEach(layerId => {
           map.addLayer({
@@ -101,17 +101,11 @@ $(document).ready(function () {
             source: 'data',
             filter: filters[layerId],
             layout: {
-              // connect tags to mapbox studio spritesheet
-              'icon-image': layerId === 'articles' ? 'articles' :
-                layerId === 'reports' ? 'reports' :
-                  layerId === 'photos' ? 'photos' :
-                    layerId === 'videos' ? 'videos' :
-                    layerId === 'social-media' ? 'social-photo' :
-                      layerId === 'goods' ? 'goods' : '',
+              'icon-image': layerId,
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
-            },
+            }
           });
           console.log('Layer added: ' + layerId); // Log for each symbol layer
         });
@@ -192,16 +186,21 @@ $(document).ready(function () {
   function handleCheckboxChange() {
     const layerId = this.id;
     console.log(`handleCheckboxChange: Layer ID = ${layerId}`); // Debug log
-    if (map.getLayer(layerId)) { // Check if layer exists
-      const visibility = map.getLayoutProperty(layerId, 'visibility');
-      console.log(`Layer ${layerId} visibility = ${visibility}`); // Debug log
+    const layer = map.getLayer(layerId);
+
+    if (layer) { // Check if layer exists
+      console.log(`Layer ${layerId} exists. Current properties:`, layer); // Debug log
 
       try {
+        const visibility = map.getLayoutProperty(layerId, 'visibility');
+        console.log(`Layer ${layerId} current visibility = ${visibility}`); // Debug log
+
         if (this.checked) {
           map.setLayoutProperty(layerId, 'visibility', 'visible');
         } else {
           map.setLayoutProperty(layerId, 'visibility', 'none');
         }
+        console.log('Visibility set for layer:', layerId, 'to', this.checked ? 'visible' : 'none'); // Success log
       } catch (e) {
         console.error(`Error setting visibility for layer ${layerId}:`, e);
       }
@@ -220,13 +219,21 @@ $(document).ready(function () {
       $('#toggle-olives-sheep').off('change').on('change', function () {
         const checked = this.checked;
         console.log('Master toggle changed:', checked); // Debug log
+
         $('.olives-sheep-sub').each(function () {
           this.checked = checked;
           console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
-          if (map.getLayer(this.id)) { // Check if layer exists
+
+          const layer = map.getLayer(this.id);
+          if (layer) { // Check if layer exists
             console.log('Setting visibility for layer:', this.id); // Debug log
+
             try {
-              map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+              const visibility = map.getLayoutProperty(this.id, 'visibility');
+              console.log(`Layer ${this.id} current visibility = ${visibility}`); // Debug log
+
+              map.setLayoutProperty(this.id, 'visibility', checked ? 'visible' : 'none');
+              console.log('Visibility set for layer:', this.id, 'to', checked ? 'visible' : 'none'); // Success log
             } catch (e) {
               console.error(`Error setting visibility for layer ${this.id}:`, e);
             }
@@ -234,6 +241,7 @@ $(document).ready(function () {
             console.warn(`Layer with ID ${this.id} does not exist.`);
           }
         });
+
         updateClusterData();
       });
 
