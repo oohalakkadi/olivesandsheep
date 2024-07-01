@@ -46,7 +46,7 @@ $(document).ready(function () {
           clusterMaxZoom: 14,
           clusterRadius: 50
         });
-
+      
         // Add clustered layer
         map.addLayer({
           id: 'clusters',
@@ -74,7 +74,8 @@ $(document).ready(function () {
             ]
           }
         });
-
+        console.log('Layer added: clusters'); // Log for clusters layer
+      
         // Add cluster count layer
         map.addLayer({
           id: 'cluster-count',
@@ -90,7 +91,8 @@ $(document).ready(function () {
             'text-color': 'white'
           }
         });
-
+        console.log('Layer added: cluster-count'); // Log for cluster-count layer
+      
         // Add other layers with filters
         symbolLayers.forEach(layerId => {
           map.addLayer({
@@ -105,6 +107,7 @@ $(document).ready(function () {
               'icon-ignore-placement': true
             }
           });
+          console.log('Layer added: ' + layerId); // Log for each symbol layer
         });
 
         function addLayerFunctionality(layerId) {
