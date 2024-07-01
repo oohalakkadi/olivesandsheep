@@ -101,11 +101,17 @@ $(document).ready(function () {
             source: 'data',
             filter: filters[layerId],
             layout: {
-              'icon-image': layerId,
+              // connect tags to mapbox studio spritesheet
+              'icon-image': layerId === 'articles' ? 'articles' :
+                layerId === 'reports' ? 'reports' :
+                  layerId === 'photos' ? 'photos' :
+                    layerId === 'videos' ? 'videos' :
+                    layerId === 'social-media' ? 'social-photo' :
+                      layerId === 'goods' ? 'goods' : '',
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
-            }
+            },
           });
           console.log('Layer added: ' + layerId); // Log for each symbol layer
         });
