@@ -189,29 +189,40 @@ $(document).ready(function () {
 
   function handleCheckboxChange() {
     const layerId = this.id;
-    const visibility = map.getLayoutProperty(layerId, 'visibility');
+    if (map.getLayer(layerId)) { // Check if layer exists
+      const visibility = map.getLayoutProperty(layerId, 'visibility');
 
-    if (this.checked) {
-      map.setLayoutProperty(layerId, 'visibility', 'visible');
+      if (this.checked) {
+        map.setLayoutProperty(layerId, 'visibility', 'visible');
+      } else {
+        map.setLayoutProperty(layerId, 'visibility', 'none');
+      }
+
+      updateClusterData();
     } else {
-      map.setLayoutProperty(layerId, 'visibility', 'none');
+      console.warn(`Layer with ID ${layerId} does not exist.`);
     }
-
-    updateClusterData();
   }
-  
+
   $('#toggle-olives-sheep').change(function () {
     const checked = this.checked;
+    console.log('Master toggle changed:', checked); // Debug log
     $('.olives-sheep-sub').each(function () {
       this.checked = checked;
-      map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+      console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
+      if (map.getLayer(this.id)) { // Check if layer exists
+        console.log('Setting visibility for layer:', this.id); // Debug log
+        map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+      } else {
+        console.warn(`Layer with ID ${this.id} does not exist.`);
+      }
     });
     updateClusterData();
   });
 
-  // Event handler for sub-checkboxes
   $('.olives-sheep-sub').change(function () {
     const anyChecked = $('.olives-sheep-sub:checked').length > 0;
+    console.log('Sub-toggle changed. Any checked:', anyChecked); // Debug log
     $('#toggle-olives-sheep').prop('checked', anyChecked);
     handleCheckboxChange.call(this);
   });
