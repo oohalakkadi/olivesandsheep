@@ -1,18 +1,14 @@
-var symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-// const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
+const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
 const filters = {
   'articles': ['==', 'Format', 'Articles'],
   'reports': ['==', 'Format', 'Reports'],
   'photos': ['==', 'Format', 'Photos'],
   'videos': ['==', 'Format', 'Videos'],
   'social-media': ['==', 'Format', 'Social Media'],
-  // 'social-photo': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Photo'],
-  // 'social-video': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Video'],
-  // 'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
   'goods': ['==', 'Format', 'Goods & Services']
 };
 
-let oliveSheepData; // Variable to store original GeoJSON data
+let originalData; // Variable to store original GeoJSON data
 
 $(document).ready(function () {
   $.ajax({
@@ -33,12 +29,12 @@ $(document).ready(function () {
       originalData = data; // Store original data
       map.on('load', function () {
         addLayers(data);
-        attachEventHandlers(data);
+        attachEventHandlers(); // Attach handlers after layers are added
       });
 
       map.on('styledata', function () {
         addLayers(data);
-        attachEventHandlers(data);
+        attachEventHandlers(); // Reattach handlers if style is reloaded
       });
 
       function addLayers(data) {
@@ -103,17 +99,11 @@ $(document).ready(function () {
             source: 'data',
             filter: filters[layerId],
             layout: {
-              // connect tags to mapbox studio spritesheet
-              'icon-image': layerId === 'articles' ? 'articles' :
-                layerId === 'reports' ? 'reports' :
-                  layerId === 'photos' ? 'photos' :
-                    layerId === 'videos' ? 'videos' :
-                    layerId === 'social-media' ? 'social-photo' :
-                      layerId === 'goods' ? 'goods' : '',
+              'icon-image': layerId,
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
-            },
+            }
           });
         });
 
@@ -135,6 +125,7 @@ $(document).ready(function () {
               }
             );
           });
+
           map.on('click', layerId, function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
             var description = `
@@ -165,7 +156,7 @@ $(document).ready(function () {
           map.fitBounds(bbox, { padding: 50 });
         }
 
-        ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'].forEach(layerId => {
+        symbolLayers.forEach(layerId => {
           addLayerFunctionality(layerId);
         });
       }
@@ -191,13 +182,19 @@ $(document).ready(function () {
 
   function handleCheckboxChange() {
     const layerId = this.id;
+    console.log(`handleCheckboxChange: Layer ID = ${layerId}`); // Debug log
     if (map.getLayer(layerId)) { // Check if layer exists
       const visibility = map.getLayoutProperty(layerId, 'visibility');
+      console.log(`Layer ${layerId} visibility = ${visibility}`); // Debug log
 
-      if (this.checked) {
-        map.setLayoutProperty(layerId, 'visibility', 'visible');
-      } else {
-        map.setLayoutProperty(layerId, 'visibility', 'none');
+      try {
+        if (this.checked) {
+          map.setLayoutProperty(layerId, 'visibility', 'visible');
+        } else {
+          map.setLayoutProperty(layerId, 'visibility', 'none');
+        }
+      } catch (e) {
+        console.error(`Error setting visibility for layer ${layerId}:`, e);
       }
 
       updateClusterData();
@@ -219,7 +216,11 @@ $(document).ready(function () {
           console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
           if (map.getLayer(this.id)) { // Check if layer exists
             console.log('Setting visibility for layer:', this.id); // Debug log
-            map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+            try {
+              map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+            } catch (e) {
+              console.error(`Error setting visibility for layer ${this.id}:`, e);
+            }
           } else {
             console.warn(`Layer with ID ${this.id} does not exist.`);
           }
