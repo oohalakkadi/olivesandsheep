@@ -152,7 +152,7 @@ var transformRequest = (url, resourceType) => {
               source: 'data',
               filter: filters[layerId],
               layout: {
-                'icon-image': layerId === 'written-works' ? 'WrittenWorks' :
+                'icon-image': layerId === 'written-works' ? 'ri-leaf-fill' :
                   layerId === 'photography' ? 'Photography' :
                     layerId === 'social-media' ? 'SocialMedia' : 'Vendors',
                 'icon-size': 0.3,

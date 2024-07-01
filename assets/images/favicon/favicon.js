@@ -13,7 +13,7 @@ function iconChange() {
     setInterval(function() {
         document.getElementById("icon").href = frames[currentFrame];
         currentFrame = (currentFrame + 1) % frames.length;
-    }, 250);
+    }, 100);
 }
 
 window.onload = iconChange;
