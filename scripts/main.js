@@ -155,7 +155,7 @@ var transformRequest = (url, resourceType) => {
                   layerId === 'photos' ? 'photos' :
                     layerId === 'social-media' ? 'social-photo' :
                     layerId === 'goods' ? 'goods' : '',
-                'icon-size': 1.5,
+                'icon-size': 1.2,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true
               },

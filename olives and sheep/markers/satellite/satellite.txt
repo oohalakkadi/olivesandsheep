@@ -1,1 +1,2 @@
-For these, I layered white fill icons with outline icons of hex code: 361861
+For these, I layered white fill icons with outline icons of hex code: #361861
+Had to edit social-photo outline in Illustrator
