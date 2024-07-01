@@ -153,9 +153,9 @@ var transformRequest = (url, resourceType) => {
               layout: {
                 'icon-image': layerId === 'articles' ? 'articles' :
                   layerId === 'photos' ? 'photos' :
-                    layerId === 'social-media' ? 'socialmedia' :
+                    layerId === 'social-media' ? 'social-photo' :
                     layerId === 'goods' ? 'goods' : '',
-                'icon-size': 1,
+                'icon-size': 2,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true
               },
