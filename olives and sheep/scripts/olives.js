@@ -1,7 +1,6 @@
-// olives.js
-const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-// const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
-const filters = {
+var symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
+// var symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
+var filters = {
   'articles': ['==', 'Format', 'Articles'],
   'reports': ['==', 'Format', 'Reports'],
   'photos': ['==', 'Format', 'Photos'],
@@ -12,8 +11,6 @@ const filters = {
   // 'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
   'goods': ['==', 'Format', 'Goods & Services']
 };
-
-let oliveData; // Variable to store original GeoJSON data
 
 $(document).ready(function () {
   $.ajax({
@@ -30,21 +27,21 @@ $(document).ready(function () {
       latfield: 'Latitude',
       lonfield: 'Longitude',
       delimiter: ','
-    }, function (err, data) {
-      originalData = data; // Store original data
+    }, function (err, oliveData) {
+      originalData = oliveData; // Store original data
       map.on('load', function () {
         addLayers(data);
       });
 
       map.on('styledata', function () {
-        addLayers(data);
+        addLayers(oliveData);
       });
 
-      function addLayers(data) {
+      function addLayers(oliveData) {
         // Add GeoJSON source with clustering
-        map.addSource('data', {
+        map.addSource('oliveData', {
           type: 'geojson',
-          data: data,
+          data: oliveData,
           cluster: true,
           clusterMaxZoom: 14,
           clusterRadius: 50
@@ -54,7 +51,7 @@ $(document).ready(function () {
         map.addLayer({
           id: 'clusters',
           type: 'circle',
-          source: 'data',
+          source: 'oliveData',
           filter: ['has', 'point_count'],
           paint: {
             'circle-color': [
@@ -82,7 +79,7 @@ $(document).ready(function () {
         map.addLayer({
           id: 'cluster-count',
           type: 'symbol',
-          source: 'data',
+          source: 'oliveData',
           filter: ['has', 'point_count'],
           layout: {
             'text-field': '{point_count_abbreviated}',
@@ -99,7 +96,7 @@ $(document).ready(function () {
           map.addLayer({
             id: layerId,
             type: 'symbol',
-            source: 'data',
+            source: 'oliveData',
             filter: filters[layerId],
             layout: {
               // connect tags to mapbox studio spritesheet
@@ -122,7 +119,7 @@ $(document).ready(function () {
               layers: ['clusters']
             });
             const clusterId = features[0].properties.cluster_id;
-            map.getSource('data').getClusterExpansionZoom(
+            map.getSource('oliveData').getClusterExpansionZoom(
               clusterId,
               (err, zoom) => {
                 if (err) return;
@@ -185,7 +182,7 @@ $(document).ready(function () {
       features: filteredFeatures
     };
 
-    map.getSource('data').setData(updatedData);
+    map.getSource('oliveData').setData(updatedData);
   }
 
   function handleCheckboxChange() {
