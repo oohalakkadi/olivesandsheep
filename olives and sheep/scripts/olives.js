@@ -74,7 +74,6 @@ $(document).ready(function () {
             ]
           }
         });
-        console.log('Layer added: clusters'); // Log for clusters layer
 
         // Add cluster count layer
         map.addLayer({
@@ -91,7 +90,6 @@ $(document).ready(function () {
             'text-color': 'white'
           }
         });
-        console.log('Layer added: cluster-count'); // Log for cluster-count layer
 
         // Add other layers with filters
         symbolLayers.forEach(layerId => {
@@ -101,13 +99,17 @@ $(document).ready(function () {
             source: 'data',
             filter: filters[layerId],
             layout: {
-              'icon-image': layerId,
+              'icon-image': layerId === 'articles' ? 'articles' :
+                layerId === 'reports' ? 'reports' :
+                  layerId === 'photos' ? 'photos' :
+                    layerId === 'videos' ? 'videos' :
+                    layerId === 'social-media' ? 'social-photo' :
+                      layerId === 'goods' ? 'goods' : '',
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
             }
           });
-          console.log('Layer added: ' + layerId); // Log for each symbol layer
         });
 
         function addLayerFunctionality(layerId) {
@@ -185,60 +187,39 @@ $(document).ready(function () {
 
   function handleCheckboxChange() {
     const layerId = this.id;
-    console.log(`handleCheckboxChange: Layer ID = ${layerId}`); // Debug log
     const layer = map.getLayer(layerId);
 
     if (layer) { // Check if layer exists
-      console.log(`Layer ${layerId} exists. Current properties:`, layer); // Debug log
-
       try {
-        const visibility = map.getLayoutProperty(layerId, 'visibility');
-        console.log(`Layer ${layerId} current visibility = ${visibility}`); // Debug log
-
         if (this.checked) {
           map.setLayoutProperty(layerId, 'visibility', 'visible');
         } else {
           map.setLayoutProperty(layerId, 'visibility', 'none');
         }
-        console.log('Visibility set for layer:', layerId, 'to', this.checked ? 'visible' : 'none'); // Success log
       } catch (e) {
         console.error(`Error setting visibility for layer ${layerId}:`, e);
       }
 
       updateClusterData();
-    } else {
-      console.warn(`Layer with ID ${layerId} does not exist.`);
     }
   }
 
   function attachEventHandlers() {
     // Ensure elements exist before attaching handlers
     if ($('#toggle-olives-sheep').length && $('.olives-sheep-sub').length) {
-      console.log('Attaching event handlers'); // Debug log
-
       $('#toggle-olives-sheep').off('change').on('change', function () {
         const checked = this.checked;
-        console.log('Master toggle changed:', checked); // Debug log
 
         $('.olives-sheep-sub').each(function () {
           this.checked = checked;
-          console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
 
           const layer = map.getLayer(this.id);
           if (layer) { // Check if layer exists
-            console.log('Setting visibility for layer:', this.id); // Debug log
-
             try {
-              const visibility = map.getLayoutProperty(this.id, 'visibility');
-              console.log(`Layer ${this.id} current visibility = ${visibility}`); // Debug log
-
               map.setLayoutProperty(this.id, 'visibility', checked ? 'visible' : 'none');
-              console.log('Visibility set for layer:', this.id, 'to', checked ? 'visible' : 'none'); // Success log
             } catch (e) {
               console.error(`Error setting visibility for layer ${this.id}:`, e);
             }
-          } else {
-            console.warn(`Layer with ID ${this.id} does not exist.`);
           }
         });
 
@@ -247,12 +228,9 @@ $(document).ready(function () {
 
       $('.olives-sheep-sub').off('change').on('change', function () {
         const anyChecked = $('.olives-sheep-sub:checked').length > 0;
-        console.log('Sub-toggle changed. Any checked:', anyChecked); // Debug log
         $('#toggle-olives-sheep').prop('checked', anyChecked);
         handleCheckboxChange.call(this);
       });
-    } else {
-      console.warn('Toggle elements not found');
     }
   }
 
