@@ -1,6 +1,6 @@
 var symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-// var symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
-var filters = {
+// const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
+const filters = {
   'articles': ['==', 'Format', 'Articles'],
   'reports': ['==', 'Format', 'Reports'],
   'photos': ['==', 'Format', 'Photos'],
@@ -11,6 +11,8 @@ var filters = {
   // 'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
   'goods': ['==', 'Format', 'Goods & Services']
 };
+
+let oliveSheepData; // Variable to store original GeoJSON data
 
 $(document).ready(function () {
   $.ajax({

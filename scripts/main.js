@@ -54,7 +54,3 @@ document.getElementById('basemap-menu').addEventListener('click', function (e) {
   }
 });
 
-// Load additional data and functionality
-const script = document.createElement('script');
-script.src = 'olives and sheep/scripts/olives.js';
-document.head.appendChild(script);
