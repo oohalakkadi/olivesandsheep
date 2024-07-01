@@ -29,21 +29,21 @@ $(document).ready(function () {
       latfield: 'Latitude',
       lonfield: 'Longitude',
       delimiter: ','
-    }, function (err, oliveData) {
-      originalData = oliveData; // Store original data
+    }, function (err, data) {
+      originalData = data; // Store original data
       map.on('load', function () {
-        addLayers(oliveData);
+        addLayers(data);
       });
 
       map.on('styledata', function () {
-        addLayers(oliveData);
+        addLayers(data);
       });
 
-      function addLayers(oliveData) {
+      function addLayers(data) {
         // Add GeoJSON source with clustering
-        map.addSource('oliveData', {
+        map.addSource('data', {
           type: 'geojson',
-          data: oliveData,
+          data: data,
           cluster: true,
           clusterMaxZoom: 14,
           clusterRadius: 50
@@ -53,7 +53,7 @@ $(document).ready(function () {
         map.addLayer({
           id: 'clusters',
           type: 'circle',
-          source: 'oliveData',
+          source: 'data',
           filter: ['has', 'point_count'],
           paint: {
             'circle-color': [
@@ -81,7 +81,7 @@ $(document).ready(function () {
         map.addLayer({
           id: 'cluster-count',
           type: 'symbol',
-          source: 'oliveData',
+          source: 'data',
           filter: ['has', 'point_count'],
           layout: {
             'text-field': '{point_count_abbreviated}',
@@ -98,7 +98,7 @@ $(document).ready(function () {
           map.addLayer({
             id: layerId,
             type: 'symbol',
-            source: 'oliveData',
+            source: 'data',
             filter: filters[layerId],
             layout: {
               // connect tags to mapbox studio spritesheet
@@ -121,7 +121,7 @@ $(document).ready(function () {
               layers: ['clusters']
             });
             const clusterId = features[0].properties.cluster_id;
-            map.getSource('oliveData').getClusterExpansionZoom(
+            map.getSource('data').getClusterExpansionZoom(
               clusterId,
               (err, zoom) => {
                 if (err) return;
@@ -184,7 +184,7 @@ $(document).ready(function () {
       features: filteredFeatures
     };
 
-    map.getSource('oliveData').setData(updatedData);
+    map.getSource('data').setData(updatedData);
   }
 
   function handleCheckboxChange() {
