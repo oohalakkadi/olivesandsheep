@@ -1,5 +1,5 @@
 // script.js
-
+import { svgIcons } from 'olives and sheep/svgIcons.js';
 // Function to transform the request URL
 var transformRequest = (url, resourceType) => {
     var isMapboxRequest =
@@ -55,12 +55,12 @@ var transformRequest = (url, resourceType) => {
     }
   });
   
-  const symbolLayers = ['written-works', 'photography', 'social-media', 'vendors'];
+  const symbolLayers = ['articles', 'photos', 'social-media', 'goods'];
   const filters = {
-    'written-works': ['==', 'Format', 'Written Works'],
-    'photography': ['==', 'Format', 'Photography'],
+    'articles': ['==', 'Format', 'Articles'],
+    'photos': ['==', 'Format', 'Photos'],
     'social-media': ['==', 'Format', 'Social Media'],
-    'vendors': ['==', 'Format', 'Vendors']
+    'goods': ['==', 'Format', 'Goods & Services']
   };
   
   let originalData; // Variable to store original GeoJSON data
@@ -152,17 +152,15 @@ var transformRequest = (url, resourceType) => {
               source: 'data',
               filter: filters[layerId],
               layout: {
-                'icon-image': layerId === 'written-works' ? 'ri-leaf-fill' :
-                  layerId === 'photography' ? 'Photography' :
-                    layerId === 'social-media' ? 'SocialMedia' : 'Vendors',
-                'icon-size': 0.3,
+                'icon-image': svgIcons[layerId],
+                'icon-size': 1,
                 'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-                'text-allow-overlap': true,
-                'text-ignore-placement': true
+                'icon-ignore-placement': true
               },
               paint: {
-                'icon-color': '#412272'
+                'icon-color': 'white',
+                'icon-halo-color': '#000000',
+                'icon-halo-width': 1
               }
             });
           });
@@ -216,7 +214,7 @@ var transformRequest = (url, resourceType) => {
             map.fitBounds(bbox, { padding: 50 });
           }
   
-          ['written-works', 'photography', 'social-media', 'vendors'].forEach(layerId => {
+          ['articles', 'photos', 'social-media', 'goods'].forEach(layerId => {
             addLayerFunctionality(layerId);
           });
         }
@@ -254,7 +252,7 @@ var transformRequest = (url, resourceType) => {
       }
     
       map.on('idle', () => {
-        const toggleableLayerIds = ['written-works', 'photography', 'social-media', 'vendors'];
+        const toggleableLayerIds = ['articles', 'photos', 'social-media', 'goods'];
     
         for (const id of toggleableLayerIds) {
           const checkbox = document.getElementById(id);

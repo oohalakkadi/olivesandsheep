@@ -63,16 +63,6 @@ body {
     border-bottom-color: rgb(61, 59, 59);
   }
   
-  /* #olives-and-sheep-menu {
-    background: rgba(23, 0, 40, 0.75);
-    position: absolute;
-    z-index: 2;
-    width: 120px;
-    font-family: 'Helvetica Neue', sans-serif;
-    top: 10px;
-    right: 10px;
-  } */
-  
   #basemap-menu {
     background: rgba(23, 0, 40, 0.75);
     position: absolute;
@@ -86,7 +76,6 @@ body {
     justify-content: space-around;
   }
   
-  /* #olives-and-sheep-menu a, */
   #basemap-menu a {
     font-size: 13px;
     color: #ffffff;
@@ -98,24 +87,20 @@ body {
     text-align: center;
   }
   
-  /* #olives-and-sheep-menu a:last-child, */
   #basemap-menu a:last-child {
     border: none;
   }
   
-  /* #olives-and-sheep-menu a:hover, */
   #basemap-menu a:hover {
     background-color: rgba(89, 0, 136, 0.75);
     color: #fdfdfd;
   }
   
-  /* #olives-and-sheep-menu a.active, */
   #basemap-menu a.active {
     background-color: rgba(115, 0, 176, 0.75);
     color: #ffffff;
   }
   
-  /* #olives-and-sheep-menu a.active:hover, */
   #basemap-menu a.active:hover {
     background: rgba(89, 0, 136, 0.75);
   }
