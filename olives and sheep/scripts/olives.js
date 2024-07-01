@@ -1,14 +1,15 @@
 // olivesAndSheep.js
 const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
+// const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-photo', 'social-video', 'social-text', 'goods'];
 const filters = {
   'articles': ['==', 'Format', 'Articles'],
   'reports': ['==', 'Format', 'Reports'],
   'photos': ['==', 'Format', 'Photos'],
   'videos': ['==', 'Format', 'Videos'],
   'social-media': ['==', 'Format', 'Social Media'],
-  'social-photo': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Photo'],
-  'social-video': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Video'],
-  'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
+  // 'social-photo': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Photo'],
+  // 'social-video': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Video'],
+  // 'social-text': ['==', 'Format', 'Social Media'] && ['==', 'Social Media Format', 'Text'],
   'goods': ['==', 'Format', 'Goods & Services']
 };
 
@@ -199,6 +200,22 @@ $(document).ready(function () {
 
     updateClusterData();
   }
+  
+  $('#toggle-olives-sheep').change(function () {
+    const checked = this.checked;
+    $('.olives-sheep-sub').each(function () {
+      this.checked = checked;
+      map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+    });
+    updateClusterData();
+  });
+
+  // Event handler for sub-checkboxes
+  $('.olives-sheep-sub').change(function () {
+    const anyChecked = $('.olives-sheep-sub:checked').length > 0;
+    $('#toggle-olives-sheep').prop('checked', anyChecked);
+    handleCheckboxChange.call(this);
+  });
 
   map.on('idle', () => {
     const toggleableLayerIds = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
