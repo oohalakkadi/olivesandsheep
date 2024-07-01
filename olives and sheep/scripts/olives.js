@@ -33,10 +33,12 @@ $(document).ready(function () {
       originalData = data; // Store original data
       map.on('load', function () {
         addLayers(data);
+        attachEventHandlers(data);
       });
 
       map.on('styledata', function () {
         addLayers(data);
+        attachEventHandlers(data);
       });
 
       function addLayers(data) {
@@ -204,28 +206,37 @@ $(document).ready(function () {
     }
   }
 
-  $('#toggle-olives-sheep').change(function () {
-    const checked = this.checked;
-    console.log('Master toggle changed:', checked); // Debug log
-    $('.olives-sheep-sub').each(function () {
-      this.checked = checked;
-      console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
-      if (map.getLayer(this.id)) { // Check if layer exists
-        console.log('Setting visibility for layer:', this.id); // Debug log
-        map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
-      } else {
-        console.warn(`Layer with ID ${this.id} does not exist.`);
-      }
-    });
-    updateClusterData();
-  });
+  function attachEventHandlers() {
+    // Ensure elements exist before attaching handlers
+    if ($('#toggle-olives-sheep').length && $('.olives-sheep-sub').length) {
+      console.log('Attaching event handlers'); // Debug log
 
-  $('.olives-sheep-sub').change(function () {
-    const anyChecked = $('.olives-sheep-sub:checked').length > 0;
-    console.log('Sub-toggle changed. Any checked:', anyChecked); // Debug log
-    $('#toggle-olives-sheep').prop('checked', anyChecked);
-    handleCheckboxChange.call(this);
-  });
+      $('#toggle-olives-sheep').off('change').on('change', function () {
+        const checked = this.checked;
+        console.log('Master toggle changed:', checked); // Debug log
+        $('.olives-sheep-sub').each(function () {
+          this.checked = checked;
+          console.log('Sub-toggle:', this.id, 'checked:', checked); // Debug log
+          if (map.getLayer(this.id)) { // Check if layer exists
+            console.log('Setting visibility for layer:', this.id); // Debug log
+            map.setLayoutProperty(this.id, checked ? 'visible' : 'none'); // Directly update visibility
+          } else {
+            console.warn(`Layer with ID ${this.id} does not exist.`);
+          }
+        });
+        updateClusterData();
+      });
+
+      $('.olives-sheep-sub').off('change').on('change', function () {
+        const anyChecked = $('.olives-sheep-sub:checked').length > 0;
+        console.log('Sub-toggle changed. Any checked:', anyChecked); // Debug log
+        $('#toggle-olives-sheep').prop('checked', anyChecked);
+        handleCheckboxChange.call(this);
+      });
+    } else {
+      console.warn('Toggle elements not found');
+    }
+  }
 
   map.on('idle', () => {
     const toggleableLayerIds = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
@@ -233,6 +244,7 @@ $(document).ready(function () {
     for (const id of toggleableLayerIds) {
       const checkbox = document.getElementById(id);
       if (checkbox) {
+        checkbox.removeEventListener('change', handleCheckboxChange); // Remove previous handlers
         checkbox.addEventListener('change', handleCheckboxChange);
       }
     }
