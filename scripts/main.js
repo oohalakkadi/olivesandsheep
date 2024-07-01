@@ -56,5 +56,5 @@ document.getElementById('basemap-menu').addEventListener('click', function (e) {
 
 // Load additional data and functionality
 const script = document.createElement('script');
-script.src = 'olivesAndSheep.js';
+script.src = 'olives.js';
 document.head.appendChild(script);
