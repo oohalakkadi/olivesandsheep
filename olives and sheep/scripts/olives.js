@@ -126,10 +126,12 @@ function makeGeoJSON(csvData) {
             .setHTML(popupContent)
             .addTo(map);
         },
-        
+
         initializeLeg: function (spiderLeg) {
           const pinElem = spiderLeg.elements.pin;
           const feature = spiderLeg.feature;
+
+          console.log(feature.properties.Format);
 
           let iconImage;
           switch (feature.properties.Format) {
