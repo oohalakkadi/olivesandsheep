@@ -101,9 +101,9 @@ function makeGeoJSON(csvData) {
                   <h4>${feature.properties.About}</h4>
                   <h4><a href='${feature.properties.Link}'>${feature.properties.Hyperlink}</a></h4>
                 `;
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-          }
+          // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          //   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          // }
           new mapboxgl.Popup()
             .setLngLat(spiderLeg.mapboxMarker.getLngLat())
             .setHTML(popupContent)
