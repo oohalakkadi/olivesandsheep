@@ -93,6 +93,8 @@ function makeGeoJSON(csvData) {
         animationSpeed: 200,
         customPin: true,
         onClick: function (e, spiderLeg) {
+          console.log(e);
+          const coordinates = e.features[0].geometry.coordinates.slice();
           const feature = spiderLeg.feature;
           const popupContent = `
                   <h3>${feature.properties.Name}</h3>
@@ -101,9 +103,9 @@ function makeGeoJSON(csvData) {
                   <h4>${feature.properties.About}</h4>
                   <h4><a href='${feature.properties.Link}'>${feature.properties.Hyperlink}</a></h4>
                 `;
-          // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          //   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-          // }
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          }
           new mapboxgl.Popup()
             .setLngLat(spiderLeg.mapboxMarker.getLngLat())
             .setHTML(popupContent)
