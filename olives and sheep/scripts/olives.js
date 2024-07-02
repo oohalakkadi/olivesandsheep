@@ -131,29 +131,12 @@ function makeGeoJSON(csvData) {
           const pinElem = spiderLeg.elements.pin;
           const feature = spiderLeg.feature;
 
-          console.log(feature.properties.Format);
-
-          let iconImage;
-          switch (feature.properties.Format) {
-            case 'Articles':
-              iconImage = 'articles';
-              break;
-            case 'Reports':
-              iconImage = 'reports';
-              break;
-            case 'Photos':
-              iconImage = 'photos';
-              break;
-            case 'Videos':
-              iconImage = 'videos';
-              break;
-            case 'Social Media':
-              iconImage = 'social-photo';
-              break;
-            case 'Goods & Services':
-              iconImage = 'goods';
-              break;
-          }
+          iconImage = feature.properties.Format === 'Articles' ? 'articles':
+            feature.properties.Format === 'Reports' ? 'reports':
+            feature.properties.Format === 'Photos' ? 'photos':
+            feature.properties.Format === 'Videos' ? 'videos':
+            feature.properties.Format === 'Social Media' ? 'social-photo':
+            feature.properties.Format === 'Goods & Services' ? 'goods': '';
 
           pinElem.style.backgroundImage = `url(${map.style.getImage(iconImage).url})`;
           pinElem.style.backgroundSize = 'contain';
