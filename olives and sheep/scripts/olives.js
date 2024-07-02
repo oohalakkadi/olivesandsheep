@@ -94,23 +94,39 @@ function makeGeoJSON(csvData) {
         customPin: true,
         onClick: function (e, spiderLeg) {
           console.log(e);
-          const coordinates = e.features[0].geometry.coordinates.slice();
+          console.log(spiderLeg);
+      
           const feature = spiderLeg.feature;
-          const popupContent = `
-                  <h3>${feature.properties.Name}</h3>
-                  <h4><em>${feature.properties.Date}</em></h4>
-                  <h4><b>${feature.properties.Address}</b></h4>
-                  <h4>${feature.properties.About}</h4>
-                  <h4><a href='${feature.properties.Link}'>${feature.properties.Hyperlink}</a></h4>
-                `;
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      
+          if (!feature || !feature.geometry || !feature.geometry.coordinates) {
+            console.error('Spider leg feature does not have geometry or coordinates', feature);
+            return;
           }
+      
+          const coordinates = feature.geometry.coordinates.slice();
+          const popupContent = `
+            <h3>${feature.properties.Name}</h3>
+            <h4><em>${feature.properties.Date}</em></h4>
+            <h4><b>${feature.properties.Address}</b></h4>
+            <h4>${feature.properties.About}</h4>
+            <h4><a href='${feature.properties.Link}'>${feature.properties.Hyperlink}</a></h4>
+          `;
+      
+          // Check if the event has a valid lngLat property
+          if (e.lngLat && e.lngLat.lng !== undefined) {
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+          } else {
+            console.error('Event does not have lngLat', e);
+          }
+      
           new mapboxgl.Popup()
             .setLngLat(spiderLeg.mapboxMarker.getLngLat())
             .setHTML(popupContent)
             .addTo(map);
         },
+        
         initializeLeg: function (spiderLeg) {
           const pinElem = spiderLeg.elements.pin;
           const feature = spiderLeg.feature;
