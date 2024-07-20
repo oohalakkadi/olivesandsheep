@@ -1,11 +1,11 @@
 const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
 const filters = {
-  'articles': ['==', 'Format', 'Articles'],
-  'reports': ['==', 'Format', 'Reports'],
-  'photos': ['==', 'Format', 'Photos'],
-  'videos': ['==', 'Format', 'Videos'],
-  'social-media': ['==', 'Format', 'Social Media'],
-  'goods': ['==', 'Format', 'Goods & Services']
+  'articles': ['==', 'Filter', 'Articles'],
+  'reports': ['==', 'Filter', 'Reports'],
+  'photos': ['==', 'Filter', 'Photos'],
+  'videos': ['==', 'Filter', 'Videos'],
+  'social-media': ['==', 'Filter', 'Social Media'],
+  'goods': ['==', 'Filter', 'Goods & Services']
 };
 
 let originalData; // Variable to store original GeoJSON data
@@ -170,7 +170,7 @@ $(document).ready(function () {
 
   function updateClusterData() {
     let filteredFeatures = originalData.features.filter(feature => {
-      let format = feature.properties.Format;
+      let format = feature.properties.Filter;
       return !symbolLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
         return visibility === 'none' && filters[layerId][2] === format;
