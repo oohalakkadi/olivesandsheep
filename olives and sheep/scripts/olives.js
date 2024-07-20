@@ -134,10 +134,10 @@ $(document).ready(function () {
           map.on('click', layerId, function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
             var description = `
-                <h3>${e.features[0].properties.Name}</h3>
+                <h3>${e.features[0].properties.Title}</h3>
                 <h4><em>${e.features[0].properties.Date}</em></h4>
                 <h4><b>${e.features[0].properties.Address}</b></h4>
-                <h4>${e.features[0].properties.About}</h4>
+                <h4>${e.features[0].properties.Description}</h4>
                 <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
               `;
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
