@@ -221,14 +221,13 @@ $(document).ready(function () {
   }
 
   function attachEventHandlers() { //CHANGE HANDLERS
-    // Ensure elements exist before attaching handlers 
     if ($('#toggle-mistaclim').length && $('.mistaclim-sub').length) {
-      $('#mistaclim-sheep').off('change').on('change', function () {
+      $('#toggle-mistaclim').off('change').on('change', function () {
         const checked = this.checked;
-
+  
         $('.mistaclim-sub').each(function () {
           this.checked = checked;
-
+  
           const layer = map.getLayer(this.id);
           if (layer) { // Check if layer exists
             try {
@@ -238,10 +237,10 @@ $(document).ready(function () {
             }
           }
         });
-
+  
         updateClusterData();
       });
-
+  
       $('.mistaclim-sub').off('change').on('change', function () {
         const anyChecked = $('.mistaclim-sub:checked').length > 0;
         $('#toggle-mistaclim').prop('checked', anyChecked);
@@ -249,7 +248,7 @@ $(document).ready(function () {
       });
     }
   }
-
+  
   map.on('idle', () => {
     for (const id of symbolLayers) {
       const checkbox = document.getElementById(id);
@@ -258,5 +257,5 @@ $(document).ready(function () {
         checkbox.addEventListener('change', handleCheckboxChange);
       }
     }
-  });
+  });  
 });
