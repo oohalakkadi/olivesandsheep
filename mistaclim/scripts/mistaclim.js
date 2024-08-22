@@ -186,7 +186,7 @@ $(document).ready(function () {
 
   function updateClusterData() {
     let filteredFeatures = originalData.features.filter(feature => {
-      let format = feature.properties.Filter;
+      let format = feature.properties['Event Type'];
       return !symbolLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
         return visibility === 'none' && filters[layerId][2] === format;
@@ -220,16 +220,14 @@ $(document).ready(function () {
     }
   }
 
-  function attachEventHandlers() { //CHANGE HANDLERS
+  function attachEventHandlers() {
     if ($('#toggle-mistaclim').length && $('.mistaclim-sub').length) {
       $('#toggle-mistaclim').off('change').on('change', function () {
         const checked = this.checked;
-  
         $('.mistaclim-sub').each(function () {
           this.checked = checked;
-  
           const layer = map.getLayer(this.id);
-          if (layer) { // Check if layer exists
+          if (layer) {
             try {
               map.setLayoutProperty(this.id, 'visibility', checked ? 'visible' : 'none');
             } catch (e) {
@@ -237,10 +235,9 @@ $(document).ready(function () {
             }
           }
         });
-  
         updateClusterData();
       });
-  
+
       $('.mistaclim-sub').off('change').on('change', function () {
         const anyChecked = $('.mistaclim-sub:checked').length > 0;
         $('#toggle-mistaclim').prop('checked', anyChecked);
@@ -248,6 +245,7 @@ $(document).ready(function () {
       });
     }
   }
+
   
   map.on('idle', () => {
     for (const id of symbolLayers) {
