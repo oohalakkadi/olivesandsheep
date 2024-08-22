@@ -115,16 +115,17 @@ $(document).ready(function () {
         symbolLayers.forEach(layerId => {
           map.addLayer({
             id: layerId,
-            type: 'symbol',
+            // type: 'symbol',
+            type: 'circle',
             source: 'data',
             filter: filters[layerId],
             layout: {
-              'icon-image': layerId === 'articles' ? 'articles' : //EDIT LAYER IDS
-                layerId === 'reports' ? 'reports' :
-                  layerId === 'photos' ? 'photos' :
-                    layerId === 'videos' ? 'videos' :
-                    layerId === 'social-media' ? 'social-photo' :
-                      layerId === 'goods' ? 'goods' : '',
+              // 'icon-image': layerId === 'articles' ? 'articles' : //EDIT LAYER IDS
+              //   layerId === 'reports' ? 'reports' :
+              //     layerId === 'photos' ? 'photos' :
+              //       layerId === 'videos' ? 'videos' :
+              //       layerId === 'social-media' ? 'social-photo' :
+              //         layerId === 'goods' ? 'goods' : '',
               'icon-size': 1.2,
               'icon-allow-overlap': true,
               'icon-ignore-placement': true
@@ -154,12 +155,14 @@ $(document).ready(function () {
           map.on('click', layerId, function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
             var description = `
-                <h3>${e.features[0].properties.Title}</h3>
-                <h4><em>${e.features[0].properties.Date}</em></h4>
-                <h4><b>${e.features[0].properties.Address}</b></h4>
-                <h4>${e.features[0].properties.Description}</h4>
-                <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
-              `;
+              <h3>${e.features[0].properties['Activity Type']}</h3>
+              <h4><em>${e.features[0].properties['Date']}</em></h4>
+              <h4><b>${e.features[0].properties['Community Name']}</b></h4>
+              <h4>${e.features[0].properties['Short description of the day']}</h4>
+              <h4><b>${e.features[0].properties['Event Type']}</b></h4>
+              <h4><b>Perpetrator:</b> ${e.features[0].properties['Terrorist Name']}</h4>
+              <h4><a href='${e.features[0].properties['Media files (creative commons license)']}'>Media</a></h4>
+            `;
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
               coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
