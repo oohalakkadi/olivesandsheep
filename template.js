@@ -1,5 +1,9 @@
-const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-const filters = {
+// BEFORE IMPLEMENTING NEW LAYER:
+// Add to menu with proper CSS classes in index.html
+// Add layer to index.html
+
+const symbolLayers = ['fill', 'with', 'sub', 'filters']; //CHANGE TO REFLECT FILTER CRITERIA
+const filters = { // match layers tags to form fields
   'articles': ['==', 'Filter', 'Articles'],
   'reports': ['==', 'Filter', 'Reports'],
   'photos': ['==', 'Filter', 'Photos'],
@@ -8,12 +12,12 @@ const filters = {
   'goods': ['==', 'Filter', 'Goods & Services']
 };
 
-let originalData; // Variable to store original GeoJSON data
+let originalData; 
 
 $(document).ready(function () {
   $.ajax({
     type: "GET",
-    url: 'https://docs.google.com/spreadsheets/d/19FiVC6W4ncKi86eWhYK5Udh6p0ud-aaXuyJW8gpngc0/gviz/tq?tqx=out:csv&sheet=Sheet1',
+    url: 'https://docs.google.com/spreadsheets/<SPREADSHEETID>/gviz/tq?tqx=out:csv&sheet=<SHEETNAME>', // fill out spreadsheet id and sheet name (publish sheet to web)
     dataType: "text",
     success: function (csvData) {
       makeGeoJSON(csvData);
@@ -22,23 +26,22 @@ $(document).ready(function () {
 
   function makeGeoJSON(csvData) {
     csv2geojson.csv2geojson(csvData, {
-      latfield: 'Latitude',
+      latfield: 'Latitude', // match exact field names
       lonfield: 'Longitude',
       delimiter: ','
     }, function (err, data) {
-      originalData = data; // Store original data
+      originalData = data; 
       map.on('load', function () {
         addLayers(data);
-        attachEventHandlers(); // Attach handlers after layers are added
+        attachEventHandlers(); 
       });
 
       map.on('styledata', function () {
         addLayers(data);
-        attachEventHandlers(); // Reattach handlers if style is reloaded
+        attachEventHandlers(); 
       });
 
       function addLayers(data) {
-        // Add GeoJSON source with clustering
         map.addSource('data', {
           type: 'geojson',
           data: data,
@@ -47,13 +50,12 @@ $(document).ready(function () {
           clusterRadius: 50
         });
 
-        // Add clustered layer
         map.addLayer({
           id: 'clusters',
           type: 'circle',
           source: 'data',
           filter: ['has', 'point_count'],
-          paint: {
+          paint: { //EDIT COLORS
             'circle-color': [
               'step',
               ['get', 'point_count'],
@@ -75,7 +77,7 @@ $(document).ready(function () {
           }
         });
 
-        // Add cluster count layer
+
         map.addLayer({
           id: 'cluster-count',
           type: 'symbol',
@@ -91,7 +93,7 @@ $(document).ready(function () {
           }
         });
 
-        // Add other layers with filters
+
         symbolLayers.forEach(layerId => {
           map.addLayer({
             id: layerId,
@@ -99,7 +101,7 @@ $(document).ready(function () {
             source: 'data',
             filter: filters[layerId],
             layout: {
-              'icon-image': layerId === 'articles' ? 'articles' :
+              'icon-image': layerId === 'articles' ? 'articles' : //EDIT LAYER IDS
                 layerId === 'reports' ? 'reports' :
                   layerId === 'photos' ? 'photos' :
                     layerId === 'videos' ? 'videos' :
@@ -131,7 +133,7 @@ $(document).ready(function () {
             );
           });
 
-          map.on('click', layerId, function (e) {
+          map.on('click', layerId, function (e) { // EDIT POPUP
             var coordinates = e.features[0].geometry.coordinates.slice();
             var description = `
                 <h3>${e.features[0].properties.Title}</h3>
@@ -204,17 +206,17 @@ $(document).ready(function () {
     }
   }
 
-  function attachEventHandlers() {
-    // Ensure elements exist before attaching handlers
-    if ($('#toggle-olives-sheep').length && $('.olives-sheep-sub').length) {
-      $('#toggle-olives-sheep').off('change').on('change', function () {
+  function attachEventHandlers() { //CHANGE HANDLERS
+    // Ensure elements exist before attaching handlers 
+    if ($('#toggle-EXAMPLE').length && $('.EXAMPLE-sub').length) {
+      $('#toggle-EXAMPLE').off('change').on('change', function () {
         const checked = this.checked;
 
-        $('.olives-sheep-sub').each(function () {
+        $('.EXAMPLE-sub').each(function () {
           this.checked = checked;
 
           const layer = map.getLayer(this.id);
-          if (layer) { // Check if layer exists
+          if (layer) {
             try {
               map.setLayoutProperty(this.id, 'visibility', checked ? 'visible' : 'none');
             } catch (e) {
@@ -226,18 +228,16 @@ $(document).ready(function () {
         updateClusterData();
       });
 
-      $('.olives-sheep-sub').off('change').on('change', function () {
-        const anyChecked = $('.olives-sheep-sub:checked').length > 0;
-        $('#toggle-olives-sheep').prop('checked', anyChecked);
+      $('.EXAMPLE-sub').off('change').on('change', function () {
+        const anyChecked = $('.EXAMPLE-sub:checked').length > 0;
+        $('#toggle-EXAMPLE').prop('checked', anyChecked);
         handleCheckboxChange.call(this);
       });
     }
   }
 
   map.on('idle', () => {
-    //const toggleableLayerIds = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-    //for (const id of toggleableLayerIds) {
-      for (const id of symbolLayers) {
+    for (const id of symbolLayers) {
       const checkbox = document.getElementById(id);
       if (checkbox) {
         checkbox.removeEventListener('change', handleCheckboxChange); // Remove previous handlers

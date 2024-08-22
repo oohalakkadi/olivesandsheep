@@ -1,11 +1,31 @@
-const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods']; //CHANGE TO REFLECT FILTER CRITERIA
+const symbolLayers = ['none', 'settlers-harassment', 'army/police-harassment', 'settlers-violence', 'army/police-violence', 'detain/arrest', 'military-zone', 'confiscations', 'property-damage', 'sheep-theft', 'settler-building', 'unusual-event', 'other']; //CHANGE TO REFLECT FILTER CRITERIA
 const filters = {
-  'articles': ['==', 'Filter', 'Articles'],
-  'reports': ['==', 'Filter', 'Reports'],
-  'photos': ['==', 'Filter', 'Photos'],
-  'videos': ['==', 'Filter', 'Videos'],
-  'social-media': ['==', 'Filter', 'Social Media'],
-  'goods': ['==', 'Filter', 'Goods & Services']
+  'none': ['==', 'Event Type', 'No special events'],
+  'settlers-harassment': ['==', 'Event Type', 'Settlers harassment'],
+  'army/police-harassment': ['==', 'Event Type', 'Army/Police harassment'],
+  'settlers-violence': ['==', 'Event Type', 'Settlers violence'],
+  'army/police-violence': ['==', 'Event Type', 'Army/Police violence'],
+  'detain/arrest': ['==', 'Event Type', 'Detain/Arrest'],
+  'military-zone': ['==', 'Event Type', 'Close military zone'],
+  'confiscations': ['==', 'Event Type', 'Confiscations'],
+  'property-damage': ['==', 'Event Type', 'Property damage'],
+  'sheep-theft': ['==', 'Event Type', 'Theft of sheep'],
+  'settler-building': ['==', 'Event Type', 'New settlers building'],
+  'unusual-event': ['==', 'Event Type', 'Unusual evevnt'],
+  'other': ['!in', 'Event Type', [
+    'No special events', 
+    'Settlers harassment', 
+    'Army/Police harassment', 
+    'Settlers violence', 
+    'Army/Police violence', 
+    'Detain/Arrest', 
+    'Close military zone', 
+    'Confiscations', 
+    'Property damage', 
+    'Theft of sheep', 
+    'New settlers building', 
+    'Unusual evevnt'
+  ]]
 };
 
 let originalData; // Variable to store original GeoJSON data
@@ -13,7 +33,7 @@ let originalData; // Variable to store original GeoJSON data
 $(document).ready(function () {
   $.ajax({
     type: "GET",
-    url: 'https://docs.google.com/spreadsheets/d/19FiVC6W4ncKi86eWhYK5Udh6p0ud-aaXuyJW8gpngc0/gviz/tq?tqx=out:csv&sheet=sheet1',
+    url: 'https://docs.google.com/spreadsheets/d/1Q7qY-6Ski2z-jIJvWTaG1LtnYEdI93LlwQuPAfPuQOI/gviz/tq?tqx=out:csv&sheet=Sheet1', 
     dataType: "text",
     success: function (csvData) {
       makeGeoJSON(csvData);
@@ -22,8 +42,8 @@ $(document).ready(function () {
 
   function makeGeoJSON(csvData) {
     csv2geojson.csv2geojson(csvData, {
-      latfield: 'Latitude',
-      lonfield: 'Longitude',
+      latfield: 'latitude',
+      lonfield: 'longitude',
       delimiter: ','
     }, function (err, data) {
       originalData = data; // Store original data
@@ -235,9 +255,7 @@ $(document).ready(function () {
   }
 
   map.on('idle', () => {
-    const toggleableLayerIds = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods']; //CHANGE TO REFLECT FILTER CRITERIA`
-
-    for (const id of toggleableLayerIds) {
+    for (const id of symbolLayers) {
       const checkbox = document.getElementById(id);
       if (checkbox) {
         checkbox.removeEventListener('change', handleCheckboxChange); // Remove previous handlers
