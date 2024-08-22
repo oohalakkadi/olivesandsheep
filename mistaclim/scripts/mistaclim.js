@@ -119,16 +119,9 @@ $(document).ready(function () {
             type: 'circle',
             source: 'data',
             filter: filters[layerId],
-            layout: {
-              // 'icon-image': layerId === 'articles' ? 'articles' : //EDIT LAYER IDS
-              //   layerId === 'reports' ? 'reports' :
-              //     layerId === 'photos' ? 'photos' :
-              //       layerId === 'videos' ? 'videos' :
-              //       layerId === 'social-media' ? 'social-photo' :
-              //         layerId === 'goods' ? 'goods' : '',
-              'icon-size': 1.2,
-              'icon-allow-overlap': true,
-              'icon-ignore-placement': true
+            paint: {
+              'circle-radius': 5, // Adjust circle size here
+              'circle-color': '#ff0000' // Adjust the circle color as needed
             }
           });
         });
