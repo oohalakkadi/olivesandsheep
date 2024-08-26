@@ -244,6 +244,7 @@ $(document).ready(function () {
         handleCheckboxChange.call(this);
       });
     }
+    print("it's not seeing the subclasses")
   }
 
   

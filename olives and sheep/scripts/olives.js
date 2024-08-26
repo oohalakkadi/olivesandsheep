@@ -205,7 +205,6 @@ $(document).ready(function () {
   }
 
   function attachEventHandlers() {
-    // Ensure elements exist before attaching handlers
     if ($('#toggle-olives-sheep').length && $('.olives-sheep-sub').length) {
       $('#toggle-olives-sheep').off('change').on('change', function () {
         const checked = this.checked;
