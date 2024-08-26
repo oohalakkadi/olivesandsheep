@@ -33,7 +33,7 @@ let mistaclimOriginalData; // Variable to store original GeoJSON data
 $(document).ready(function () {
   $.ajax({
     type: "GET",
-    url: 'https://docs.google.com/spreadsheets/d/1Q7qY-6Ski2z-jIJvWTaG1LtnYEdI93LlwQuPAfPuQOI/gviz/tq?tqx=out:csv&sheet=Sheet1', 
+    url: 'https://docs.google.com/spreadsheets/d/1Q7qY-6Ski2z-jIJvWTaG1LtnYEdI93LlwQuPAfPuQOI/pub?gid=1387217632&single=true&output=csv', 
     dataType: "text",
     success: function (csvData) {
       makeGeoJSON(csvData);
