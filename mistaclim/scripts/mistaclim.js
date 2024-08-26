@@ -150,7 +150,7 @@ $(document).ready(function () {
             var description = `
               <h3>${e.features[0].properties['Activity Type']}</h3>
               <h4><em>${e.features[0].properties['Date']}</em></h4>
-              <h4><b>${e.features[0].properties['Community Name']}</b></h4>
+              <h4><b>${e.features[0].properties['Community name']}</b></h4>
               <h4>${e.features[0].properties['Short description of the day']}</h4>
               <h4><b>${e.features[0].properties['Event Type']}</b></h4>
               <h4><b>Perpetrator:</b> ${e.features[0].properties['Terrorist Name']}</h4>
