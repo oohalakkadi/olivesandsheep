@@ -12,20 +12,20 @@ const mistaclimFilters = {
   'sheep-theft': ['==', 'Event Type', 'Theft of sheep'],
   'settler-building': ['==', 'Event Type', 'New settlers building'],
   'unusual-event': ['==', 'Event Type', 'Unusual evevnt'],
-  'other': ['!in', 'Event Type', [
-    'No special events', 
-    'Settlers harassment', 
-    'Army/Police harassment', 
-    'Settlers violence', 
-    'Army/Police violence', 
-    'Detain/Arrest', 
-    'Close military zone', 
-    'Confiscations', 
-    'Property damage', 
-    'Theft of sheep', 
-    'New settlers building', 
-    'Unusual evevnt'
-  ]]
+  'other': ['!in', 'Event Type', 
+  'No special events', 
+  'Settlers harassment', 
+  'Army/Police harassment', 
+  'Settlers violence', 
+  'Army/Police violence', 
+  'Detain/Arrest', 
+  'Close military zone', 
+  'Confiscations', 
+  'Property damage', 
+  'Theft of sheep', 
+  'New settlers building', 
+  'Unusual evevnt'
+  ]
 };
 
 let mistaclimOriginalData; // Variable to store original GeoJSON data
