@@ -1,5 +1,5 @@
-const symbolLayers = ['none', 'settlers-harassment', 'army/police-harassment', 'settlers-violence', 'army/police-violence', 'detain/arrest', 'military-zone', 'confiscations', 'property-damage', 'sheep-theft', 'settler-building', 'unusual-event', 'other']; //CHANGE TO REFLECT FILTER CRITERIA
-const filters = {
+const mistaclimLayers = ['none', 'settlers-harassment', 'army/police-harassment', 'settlers-violence', 'army/police-violence', 'detain/arrest', 'military-zone', 'confiscations', 'property-damage', 'sheep-theft', 'settler-building', 'unusual-event', 'other']; //CHANGE TO REFLECT FILTER CRITERIA
+const mistaclimFilters = {
   'none': ['==', 'Event Type', 'No special events'],
   'settlers-harassment': ['==', 'Event Type', 'Settlers harassment'],
   'army/police-harassment': ['==', 'Event Type', 'Army/Police harassment'],
@@ -112,13 +112,13 @@ $(document).ready(function () {
         });
 
         // Add other layers with filters
-        symbolLayers.forEach(layerId => {
+        mistaclimLayers.forEach(layerId => {
           map.addLayer({
             id: layerId,
             // type: 'symbol',
             type: 'circle',
             source: 'data',
-            filter: filters[layerId],
+            filter: mistaclimFilters[layerId],
             paint: {
               'circle-radius': 5, // Adjust circle size here
               'circle-color': '#ff0000' // Adjust the circle color as needed
@@ -177,7 +177,7 @@ $(document).ready(function () {
           map.fitBounds(bbox, { padding: 50 });
         }
 
-        symbolLayers.forEach(layerId => {
+        mistaclimLayers.forEach(layerId => {
           addLayerFunctionality(layerId);
         });
       }
@@ -187,9 +187,9 @@ $(document).ready(function () {
   function updateClusterData() {
     let filteredFeatures = originalData.features.filter(feature => {
       let format = feature.properties['Event Type'];
-      return !symbolLayers.some(layerId => {
+      return !mistaclimLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
-        return visibility === 'none' && filters[layerId][2] === format;
+        return visibility === 'none' && mistaclimFilters[layerId][2] === format;
       });
     });
 
@@ -249,7 +249,7 @@ $(document).ready(function () {
 
   
   map.on('idle', () => {
-    for (const id of symbolLayers) {
+    for (const id of mistaclimLayers) {
       const checkbox = document.getElementById(id);
       if (checkbox) {
         checkbox.removeEventListener('change', handleCheckboxChange); // Remove previous handlers

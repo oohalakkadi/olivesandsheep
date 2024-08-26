@@ -1,5 +1,5 @@
-const symbolLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
-const filters = {
+const olivesLayers = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
+const olivesFilters = {
   'articles': ['==', 'Filter', 'Articles'],
   'reports': ['==', 'Filter', 'Reports'],
   'photos': ['==', 'Filter', 'Photos'],
@@ -92,12 +92,12 @@ $(document).ready(function () {
         });
 
         // Add other layers with filters
-        symbolLayers.forEach(layerId => {
+        olivesLayers.forEach(layerId => {
           map.addLayer({
             id: layerId,
             type: 'symbol',
             source: 'data',
-            filter: filters[layerId],
+            filter: olivesFilters[layerId],
             layout: {
               'icon-image': layerId === 'articles' ? 'articles' :
                 layerId === 'reports' ? 'reports' :
@@ -161,7 +161,7 @@ $(document).ready(function () {
           map.fitBounds(bbox, { padding: 50 });
         }
 
-        symbolLayers.forEach(layerId => {
+        olivesLayers.forEach(layerId => {
           addLayerFunctionality(layerId);
         });
       }
@@ -171,9 +171,9 @@ $(document).ready(function () {
   function updateClusterData() {
     let filteredFeatures = originalData.features.filter(feature => {
       let format = feature.properties.Filter;
-      return !symbolLayers.some(layerId => {
+      return !olivesLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
-        return visibility === 'none' && filters[layerId][2] === format;
+        return visibility === 'none' && olivesFilters[layerId][2] === format;
       });
     });
 
@@ -236,7 +236,7 @@ $(document).ready(function () {
   map.on('idle', () => {
     //const toggleableLayerIds = ['articles', 'reports', 'photos', 'videos', 'social-media', 'goods'];
     //for (const id of toggleableLayerIds) {
-      for (const id of symbolLayers) {
+      for (const id of olivesLayers) {
       const checkbox = document.getElementById(id);
       if (checkbox) {
         checkbox.removeEventListener('change', handleCheckboxChange); // Remove previous handlers
