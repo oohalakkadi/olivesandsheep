@@ -28,7 +28,7 @@ const mistaclimFilters = {
   ]]
 };
 
-let originalData; // Variable to store original GeoJSON data
+let mistaclimOriginalData; // Variable to store original GeoJSON data
 
 $(document).ready(function () {
   $.ajax({
@@ -46,7 +46,7 @@ $(document).ready(function () {
       lonfield: 'longitude',
       delimiter: ','
     }, function (err, data) {
-      originalData = data; // Store original data
+      mistaclimOriginalData = data; // Store original data
       map.on('load', function () {
         addLayers(data);
         attachEventHandlers(); // Attach handlers after layers are added
@@ -185,7 +185,7 @@ $(document).ready(function () {
   }
 
   function updateClusterData() {
-    let filteredFeatures = originalData.features.filter(feature => {
+    let filteredFeatures = mistaclimOriginalData.features.filter(feature => {
       let format = feature.properties['Event Type'];
       return !mistaclimLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
@@ -194,7 +194,7 @@ $(document).ready(function () {
     });
 
     let updatedData = {
-      ...originalData,
+      ...mistaclimOriginalData,
       features: filteredFeatures
     };
 

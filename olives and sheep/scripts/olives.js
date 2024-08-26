@@ -8,7 +8,7 @@ const olivesFilters = {
   'goods': ['==', 'Filter', 'Goods & Services']
 };
 
-let originalData; // Variable to store original GeoJSON data
+let olivesOriginalData; // Variable to store original GeoJSON data
 
 $(document).ready(function () {
   $.ajax({
@@ -26,7 +26,7 @@ $(document).ready(function () {
       lonfield: 'Longitude',
       delimiter: ','
     }, function (err, data) {
-      originalData = data; // Store original data
+      olivesOriginalData = data; // Store original data
       map.on('load', function () {
         addLayers(data);
         attachEventHandlers(); // Attach handlers after layers are added
@@ -169,7 +169,7 @@ $(document).ready(function () {
   }
 
   function updateClusterData() {
-    let filteredFeatures = originalData.features.filter(feature => {
+    let filteredFeatures = olivesOriginalData.features.filter(feature => {
       let format = feature.properties.Filter;
       return !olivesLayers.some(layerId => {
         const visibility = map.getLayoutProperty(layerId, 'visibility');
@@ -178,7 +178,7 @@ $(document).ready(function () {
     });
 
     let updatedData = {
-      ...originalData,
+      ...olivesOriginalData,
       features: filteredFeatures
     };
 
