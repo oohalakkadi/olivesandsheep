@@ -117,7 +117,10 @@ $(document).ready(function () {
             id: layerId,
             // type: 'symbol',
             type: 'circle',
-            source: 'data',
+            source: {
+              type: 'geojson',
+              data: data
+            },
             filter: mistaclimFilters[layerId],
             paint: {
               'circle-radius': 5, // Adjust circle size here
