@@ -23,12 +23,6 @@ var map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
-map.addControl(
-  new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
-      mapboxgl: mapboxgl
-  })
-);
 
 var basemaps = {
   light: 'mapbox://styles/oohalakkadi/clxwvv3g6004401om6yr48l3d',
